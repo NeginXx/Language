@@ -46,6 +46,7 @@ int NamesBufPushback(NamesBuf* vec, const char* str, size_t str_len) {
 int NewVector(Vector** vec, size_t type_sz) {
 	$;
 	assert(vec != NULL);
+	assert(*vec == NULL);
 
 	Vector vector;
 	vector.arr = calloc(vector.mincapacity, type_sz);

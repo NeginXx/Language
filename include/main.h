@@ -13,12 +13,26 @@ enum RuntimeError {
   kNoFileInDir,
   kEmptyFile,
   kUndefinedSymbols,
-  kSyntaxError
+  kSyntaxError,
+  kFatalError
 };
 
 enum SyntaxError {
-  kFuncVarDecl,
-  kNewLineError
+  kFuncVarDeclExpectedError,
+  kFuncVarDeclErrorNameExpected,
+  kVarDeclError,
+  kStatementNewLineExpectedError,
+  kFuncDeclNewLineExpectedError,
+  kCommaParenthExpectedError,
+  kVarDeclExpectedError,
+  kVarNameExpectedError,
+  kBracketOpenExpectedError,
+  kBracketCloseExpectedError,
+  kParenthOpenExpectedError,
+  kParenthCloseExpectedError,
+  kShit,
+  kShitt,
+  kCompSignExpectedError
 };
 
 enum VarType {
@@ -115,7 +129,6 @@ struct Token {
 struct Var {
   const char* name = NULL;
   VarType type = (VarType)0;
-  size_t stack_ofs = 0;
 };
 
 struct Function {
@@ -136,14 +149,20 @@ struct Code {
   Text* text = NULL;
   Position pos = {};
   NamesBuf* names_buf = NULL;
-
   Vector* tokens = NULL;      // Vector of Token
-  Vector* global_vars = NULL; // Vector of Var
-  Vector* functions = NULL;   // Vector of Function
 };
 
 struct Node {
   Node* parent = NULL;
   Vector* children = NULL;
   Token* token = NULL;
+};
+
+struct TreeInfo {
+  Node* root = NULL;
+  Text* text = NULL;
+  size_t token_idx = 0;
+  Vector* tokens = NULL;      // Vector of Token
+  Vector* global_vars = NULL; // Vector of Var
+  Vector* functions = NULL;   // Vector of Function
 };

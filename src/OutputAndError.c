@@ -102,29 +102,29 @@ void VectorVarDump(Vector* vec, const char* msg) {
 	}
 }
 
-void FunctionsAndGlobalVarsDump(Code* code) {
-	printf("Functions and global vars dump:\n");
-	printf("-------------------------\n");
-	VectorVarDump(code->global_vars, "global vars");
-	Vector* vec = code->functions;
-	for (size_t i = 0; i < vec->sz; ++i) {
-		if (i > 0 ) {
-			printf("*************************\n\n");
-		}
-		printf("function %lu\n", i + 1);
-		Function func = *(Function*)VectorGet(vec, i, sizeof(Function));
-		printf("name: %s\n", func.name);
-		printf("type: %d\n", func.type);
-		printf("args_num: %lu\n", func.args_num);
-		printf("args: %p\n", func.args);
-		printf("local_vars: %p\n\n", func.local_vars);
-		VectorVarDump(func.args, "its args:");
-		if (func.local_vars != NULL) {
-			VectorVarDump(func.local_vars, "its local vars:");
-		}
-	}
-	printf("-------------------------\n");
-}
+// void FunctionsAndGlobalVarsDump(Code* code) {
+// 	printf("Functions and global vars dump:\n");
+// 	printf("-------------------------\n");
+// 	VectorVarDump(code->global_vars, "global vars");
+// 	Vector* vec = code->functions;
+// 	for (size_t i = 0; i < vec->sz; ++i) {
+// 		if (i > 0 ) {
+// 			printf("*************************\n\n");
+// 		}
+// 		printf("function %lu\n", i + 1);
+// 		Function func = *(Function*)VectorGet(vec, i, sizeof(Function));
+// 		printf("name: %s\n", func.name);
+// 		printf("type: %d\n", func.type);
+// 		printf("args_num: %lu\n", func.args_num);
+// 		printf("args: %p\n", func.args);
+// 		printf("local_vars: %p\n\n", func.local_vars);
+// 		VectorVarDump(func.args, "its args:");
+// 		if (func.local_vars != NULL) {
+// 			VectorVarDump(func.local_vars, "its local vars:");
+// 		}
+// 	}
+// 	printf("-------------------------\n");
+// }
 
 void PrintErrorInfo(RuntimeError err) {
 	switch (err) {
@@ -145,6 +145,9 @@ void PrintErrorInfo(RuntimeError err) {
 			break;
 		case kEmptyFile:
 			fprintf(stderr, "error: file is empty\n");
+			break;
+		case kFatalError:
+			fprintf(stderr, "FATAL ERROR occured\nCompilation is interrupted\n");
 			break;
 		case kUndefinedSymbols:
 		case kSyntaxError:
@@ -167,7 +170,7 @@ void PrintStrWithUnderline(char* str, char* ofs) {
 	for (; str < ofs; ++str) {
 		fprintf(stderr, "%c", *str == '\t' ? '\t' : '-');
 	}
-	fprintf(stderr, "^");
+	fprintf(stderr, "^ ");
 	$$;
 }
 
@@ -188,7 +191,61 @@ void ErrorNotDoubledSign(Code* code, char sign) {
 	fprintf(stderr, "sign %c does not name a command. You meant %c%c?\n", sign, sign, sign);
 }
 
-void PrintSyntaxError(Code* code, SyntaxError err) {
+void PrintSyntaxError(Text* text, Token* token, SyntaxError err) {
 	$;
-	assert(code != NULL);
+	assert(text != NULL);
+	assert(token != NULL);
+
+	Position pos = token->pos;
+	fprintf(stderr, "error: syntax error on line %lu\n", pos.line + 1);
+	PrintStrWithUnderline(text->lines[token->pos.line], token->pos.ofs);
+	switch (err) {
+		case kFuncVarDeclExpectedError:
+			fprintf(stderr, "expected function or global variable declaration\n\n");
+			break;
+		case kFuncVarDeclErrorNameExpected:
+			fprintf(stderr, "expected function or variable name\n\n");
+			break;
+		case kVarDeclError:
+			fprintf(stderr, "invalid variable declaration\n\n");
+			break;
+		case kStatementNewLineExpectedError:
+			fprintf(stderr, "expected new line at end of statement\n\n");
+			break;
+		case kFuncDeclNewLineExpectedError:
+			fprintf(stderr, "expected new line at end of function before this command\n\n");
+			break;
+		case kCommaParenthExpectedError:
+			fprintf(stderr, "expected comma or closing parenthesis )\n\n");
+			break;
+		case kVarDeclExpectedError:
+			fprintf(stderr, "expected declarator int or float\n\n");
+			break;
+		case kVarNameExpectedError:
+			fprintf(stderr, "expected variable name\n\n");
+			break;
+		case kBracketOpenExpectedError:
+			fprintf(stderr, "expected open bracket [\n\n");
+			break;
+		case kBracketCloseExpectedError:
+			fprintf(stderr, "expected closing bracket ]\n\n");
+			break;
+		case kParenthOpenExpectedError:
+			fprintf(stderr, "expected open parenthesis (\n\n");
+			break;
+		case kParenthCloseExpectedError:
+			fprintf(stderr, "expected closing parenthesis )\n\n");
+			break;
+		case kShit:
+			fprintf(stderr, "expected while or if\n\n");
+			break;
+		case kShitt:
+			fprintf(stderr, "expected number\n\n");
+			break;
+		case kCompSignExpectedError:
+			fprintf(stderr, "expected compare sign\n\n");
+			break;
+		default:
+			fprintf(stderr, "can not recognize error code\n\n");
+	}
 }

@@ -94,9 +94,20 @@ Vector* not_freed_ptrs) {
 	$;
 	CATCH_ERROR(CodeConstructBufferFields(code, argc, argv,  not_freed_ptrs));
 	CATCH_ERROR(CodeConstructVector(&code->tokens,      not_freed_ptrs, sizeof(Token)));
-	CATCH_ERROR(CodeConstructVector(&code->global_vars, not_freed_ptrs, sizeof(Var)));
-	CATCH_ERROR(CodeConstructVector(&code->functions,   not_freed_ptrs, sizeof(Function)));
 	RETURN 0;
+}
+
+bool IsSymbolDelimiter(char c) {
+	$;
+	char delim_syms[] = {'(', ')', '[', ']', '\0', '\n', ' ', '\t',
+											 '<', '>', '=', '!'};
+	size_t sz = sizeof(delim_syms)/sizeof(delim_syms[0]);
+	for (size_t i = 0; i < sz; ++i) {
+		if (c == delim_syms[i]) {
+			RETURN true;
+		}
+	}
+	RETURN false;
 }
 
 bool IsNum(Code* code, Token* token) {
@@ -109,6 +120,9 @@ bool IsNum(Code* code, Token* token) {
 	float val = strtof(ofs, &end_of_num);
 	if (end_of_num == ofs) {
 		RETURN false;
+	} else if (!IsSymbolDelimiter(end_of_num[0])) {
+		ErrorUnknownSymbol(code);
+		RETURN true;
 	}
 
 	char* dot = (char*)memchr(ofs, '.', end_of_num - ofs);
@@ -160,7 +174,7 @@ bool IsKeyword(Code* code, Token* token) {
 		*(ofs + keywords[i].name_len) = '\0';
 		if (strcmp(ofs, keywords[i].name) == 0) {
 			char last_symbol = replaced_char;
-			if (last_symbol == '(' || last_symbol == ' ' || last_symbol == '\t' || last_symbol == '\0') {
+			if (IsSymbolDelimiter(replaced_char)) {
 				code->pos.ofs += keywords[i].name_len - 1;
 				token->type = keywords[i].type;
 				token->val.id = keywords[i].token_val_id;

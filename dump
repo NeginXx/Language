@@ -1,0 +1,87 @@
+digraph G {
+node [shape = "record", style = "filled", fillcolor = "#006FFF"]
+	"0x563c5d754040" [fillcolor = "#B300FF", label = "root"]
+	"0x563c5d7540c0" [fillcolor = "#B300FF", label = "func | void | shit"]
+	"0x563c5d754260" [fillcolor = "#B300FF", label = "while"]
+	"0x563c5d7542e0" [fillcolor = "#B300FF", label = "comp sign | less"]
+	"0x563c5d754360" [fillcolor = "#B300FF", label = "int num | 18"]
+"0x563c5d7542e0"->"0x563c5d754360"
+	"0x563c5d7543e0" [fillcolor = "#B300FF", label = "float num | 3.200000"]
+"0x563c5d7542e0"->"0x563c5d7543e0"
+"0x563c5d754260"->"0x563c5d7542e0"
+	"0x563c5d754460" [fillcolor = "#B300FF", label = "if"]
+	"0x563c5d7544e0" [fillcolor = "#B300FF", label = "comp sign | less"]
+	"0x563c5d754560" [fillcolor = "#B300FF", label = "int num | 5"]
+"0x563c5d7544e0"->"0x563c5d754560"
+	"0x563c5d7545e0" [fillcolor = "#B300FF", label = "int num | 5"]
+"0x563c5d7544e0"->"0x563c5d7545e0"
+"0x563c5d754460"->"0x563c5d7544e0"
+	"0x563c5d754660" [fillcolor = "#B300FF", label = "return"]
+"0x563c5d754460"->"0x563c5d754660"
+"0x563c5d754260"->"0x563c5d754460"
+	"0x563c5d7546e0" [fillcolor = "#B300FF", label = "elif"]
+	"0x563c5d754760" [fillcolor = "#B300FF", label = "comp sign | less"]
+	"0x563c5d7547e0" [fillcolor = "#B300FF", label = "int num | 7"]
+"0x563c5d754760"->"0x563c5d7547e0"
+	"0x563c5d754860" [fillcolor = "#B300FF", label = "int num | 7"]
+"0x563c5d754760"->"0x563c5d754860"
+"0x563c5d7546e0"->"0x563c5d754760"
+	"0x563c5d7548e0" [fillcolor = "#B300FF", label = "return"]
+	"0x563c5d754960" [fillcolor = "#B300FF", label = "float num | 7.700000"]
+"0x563c5d7548e0"->"0x563c5d754960"
+"0x563c5d7546e0"->"0x563c5d7548e0"
+"0x563c5d754260"->"0x563c5d7546e0"
+	"0x563c5d7549e0" [fillcolor = "#B300FF", label = "return"]
+	"0x563c5d754a60" [fillcolor = "#B300FF", label = "float num | 23.200001"]
+"0x563c5d7549e0"->"0x563c5d754a60"
+"0x563c5d754260"->"0x563c5d7549e0"
+"0x563c5d7540c0"->"0x563c5d754260"
+	"0x563c5d754ae0" [fillcolor = "#B300FF", label = "return"]
+	"0x563c5d754b60" [fillcolor = "#B300FF", label = "float num | 25.799999"]
+"0x563c5d754ae0"->"0x563c5d754b60"
+"0x563c5d7540c0"->"0x563c5d754ae0"
+"0x563c5d754040"->"0x563c5d7540c0"
+	"0x563c5d754be0" [fillcolor = "#B300FF", label = "func | int | myfunc"]
+	"0x563c5d756260" [fillcolor = "#B300FF", label = "while"]
+	"0x563c5d7562e0" [fillcolor = "#B300FF", label = "comp sign | less"]
+	"0x563c5d756360" [fillcolor = "#B300FF", label = "int num | 18"]
+"0x563c5d7562e0"->"0x563c5d756360"
+	"0x563c5d7563e0" [fillcolor = "#B300FF", label = "float num | 3.200000"]
+"0x563c5d7562e0"->"0x563c5d7563e0"
+"0x563c5d756260"->"0x563c5d7562e0"
+	"0x563c5d756460" [fillcolor = "#B300FF", label = "return"]
+"0x563c5d756260"->"0x563c5d756460"
+"0x563c5d754be0"->"0x563c5d756260"
+	"0x563c5d7564e0" [fillcolor = "#B300FF", label = "return"]
+"0x563c5d754be0"->"0x563c5d7564e0"
+	"0x563c5d756560" [fillcolor = "#B300FF", label = "if"]
+	"0x563c5d7565e0" [fillcolor = "#B300FF", label = "comp sign | less"]
+	"0x563c5d756660" [fillcolor = "#B300FF", label = "int num | 5"]
+"0x563c5d7565e0"->"0x563c5d756660"
+	"0x563c5d7566e0" [fillcolor = "#B300FF", label = "int num | 5"]
+"0x563c5d7565e0"->"0x563c5d7566e0"
+"0x563c5d756560"->"0x563c5d7565e0"
+	"0x563c5d756760" [fillcolor = "#B300FF", label = "return"]
+"0x563c5d756560"->"0x563c5d756760"
+"0x563c5d754be0"->"0x563c5d756560"
+	"0x563c5d7567e0" [fillcolor = "#B300FF", label = "elif"]
+	"0x563c5d756860" [fillcolor = "#B300FF", label = "comp sign | =="]
+	"0x563c5d7568e0" [fillcolor = "#B300FF", label = "int num | 4"]
+"0x563c5d756860"->"0x563c5d7568e0"
+	"0x563c5d756960" [fillcolor = "#B300FF", label = "int num | 4"]
+"0x563c5d756860"->"0x563c5d756960"
+"0x563c5d7567e0"->"0x563c5d756860"
+	"0x563c5d7569e0" [fillcolor = "#B300FF", label = "return"]
+	"0x563c5d756a60" [fillcolor = "#B300FF", label = "float num | 5.500000"]
+"0x563c5d7569e0"->"0x563c5d756a60"
+"0x563c5d7567e0"->"0x563c5d7569e0"
+"0x563c5d754be0"->"0x563c5d7567e0"
+"0x563c5d754040"->"0x563c5d754be0"
+	"0x563c5d756ae0" [fillcolor = "#B300FF", label = "var | int | m"]
+"0x563c5d754040"->"0x563c5d756ae0"
+	"0x563c5d756b60" [fillcolor = "#B300FF", label = "var | float | m"]
+	"0x563c5d756be0" [fillcolor = "#B300FF", label = "float num | 4.500000"]
+"0x563c5d756b60"->"0x563c5d756be0"
+"0x563c5d754040"->"0x563c5d756b60"
+"(nil)"->"0x563c5d754040"
+}

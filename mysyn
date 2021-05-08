@@ -1,21 +1,21 @@
-'declarator' = 'int' | 'float'
+Decl = 'int' | 'float'
 
-Gram ::= { Vdec | Fdec }+ '\0'
+Gram ::= { VarDecl | FuncDecl }+ '\0'
 
-Fdec ::= 'declarator' Var ( { Vdec {',', Vdec }* }* ) '[' Stat* 'return' Expr ']'
-Stat ::= Loop | Cond | Vdec '\n' | Vassg '\n' | Fcall '\n'
-Loop ::= 'while' '(' Ineq ')' '[' { Stat }+ ']'
-Cond ::= 'if' '(' Ineq ')' CondStat { 'else if' '(' Ineq ')' CondStat }* { 'else' CondStat }
-Vdec  ::= 'declarator' Var { = Expr }*
-Vassg ::= Var '=' Expr
-CondStat ::= '[' { Stat }+ ']'
-
-Ineq  ::= Expr { ['<', '>', '==', '!=', '<=', '>='] Expr ['&&', '||'] }* |
-Expr  ::= Mul  { ['+', '-'] Mul  }*
-Mul   ::= Prim { ['*', '/'] Prim }*
-Prim  ::= ( Expr ) | Num | Var | Fcall
-Fcall ::= Var ( { Expr { [',' Expr] }* }* )
-Var   ::= { ['a' - 'Z', '_'] }+ { ['0' - '9'] }*
-Num   ::= { ['0' - '9'] }+ { '.' ['0' - '9'] }
+FuncDecl  ::=  Decl Var ( { VarDecl {',', VarDecl }* }* ) StatBody
+Stat      ::=  Loop | If | VarDecl '\n' | FuncCall '\n' | 'return' { Expr } '\n' | continue '\n' | break '\n'
+Loop      ::=  'while' Cond StatBody
+If        ::=  'if' Cond StatBody { 'else if' Cond StatBody }* { 'else' StatBody }
+VarDecl   ::=  Decl Var { = Expr }*
+Cond      ::=  '(' Ineq ')'
+StatBody  ::=  '[' Stat+ ']'
+Ineq      ::=  Expr { ['<', '>', '==', '!=', '<=', '>='] Expr }
+LogicExpr ::=  Ineq { ['&&', '||'] Ineq }*
+Expr      ::=  Mul  { ['+', '-'] Mul  }*
+Mul       ::=  Prim { ['*', '/'] Prim }*
+Prim      ::=  ( Expr ) | Num | Var | FuncCall
+FuncCall  ::=  Var ( { Expr { [',' Expr] }* }* )
+Var       ::=  { ['a' - 'Z', '_'] }+ { ['0' - '9'] }*
+Num       ::=  { ['0' - '9'] }+ { '.' ['0' - '9'] }
 
 d.c:11:2: error: expected ‘;’ after struct definition
