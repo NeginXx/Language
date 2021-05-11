@@ -1,22 +1,3 @@
-void shit(int a, int b) [
-	while (18 < 3.2) [ if (5 < 5) [
-			return
-		] else if (7 < 7) [
-			return 7.7]
-		return 23.2
-	] return 25.8
+int sum(int a) [
+	return (1 + (2 + 3)) - 4
 ]
-
-int myfunc(daosij) [
-	while (18 < 3.2) [ dreturn ] return
-	if (5 < 5) [return] else if (4 == 4) [return 5.5]
-]
-
-void shit(kfdsa) [
-	if (7 < 7) [
-		return 7.7
-	]
-]
-
-int m
-float m = 4.5

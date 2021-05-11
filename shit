@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+int main(int argc, char* argv[]) {
+	switch(argc) {
+		case 3:
+			printf("shit3\n");
+			break;
+		case 8:
+			printf("shit8\n");
+			break;
+		case 9:
+			printf("shit9\n");
+			break;
+		case 277:
+			printf("shit277\n");
+			break;
+		case 919:
+			printf("shit919\n");
+			break;
+					case :
+			printf("shit919\n");
+			break;
+					case 919:
+			printf("shit919\n");
+			break;
+					case 919:
+			printf("shit919\n");
+			break;
+					case 919:
+			printf("shit919\n");
+			break;
+					case 919:
+			printf("shit919\n");
+			break;
+					case 919:
+			printf("shit919\n");
+			break;
+		default:
+			printf("shiiiiiit\n");
+	} 
+}

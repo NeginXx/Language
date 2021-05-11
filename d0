@@ -1,0 +1,51 @@
+digraph G {
+node [shape = "record", style = "filled", fillcolor = "#006FFF"]
+	"0x55ddaf554430" [fillcolor = "#B300FF", label = "root"]
+	"0x55ddaf5544b0" [fillcolor = "#B300FF", label = "func | int | sum"]
+	"0x55ddaf554650" [fillcolor = "#B300FF", label = "return"]
+	"0x55ddaf5546d0" [fillcolor = "#B300FF", label = "arith op | -"]
+	"0x55ddaf554950" [fillcolor = "#B300FF", label = "arith op | +"]
+	"0x55ddaf554750" [fillcolor = "#B300FF", label = "int num | 1"]
+edge [color=black];
+"0x55ddaf554750"->"0x55ddaf554950"
+edge [color=red];
+"0x55ddaf554950"->"0x55ddaf554750"
+	"0x55ddaf5547d0" [fillcolor = "#B300FF", label = "arith op | +"]
+	"0x55ddaf554850" [fillcolor = "#B300FF", label = "int num | 2"]
+edge [color=black];
+"0x55ddaf554850"->"0x55ddaf5547d0"
+edge [color=red];
+"0x55ddaf5547d0"->"0x55ddaf554850"
+	"0x55ddaf5548d0" [fillcolor = "#B300FF", label = "int num | 3"]
+edge [color=black];
+"0x55ddaf5548d0"->"0x55ddaf5547d0"
+edge [color=red];
+"0x55ddaf5547d0"->"0x55ddaf5548d0"
+edge [color=black];
+"0x55ddaf5547d0"->"0x55ddaf554950"
+edge [color=red];
+"0x55ddaf554950"->"0x55ddaf5547d0"
+edge [color=black];
+"0x55ddaf554950"->"0x55ddaf5546d0"
+edge [color=red];
+"0x55ddaf5546d0"->"0x55ddaf554950"
+	"0x55ddaf5549d0" [fillcolor = "#B300FF", label = "int num | 4"]
+edge [color=black];
+"0x55ddaf5549d0"->"0x55ddaf5546d0"
+edge [color=red];
+"0x55ddaf5546d0"->"0x55ddaf5549d0"
+edge [color=black];
+"0x55ddaf5546d0"->"0x55ddaf554650"
+edge [color=red];
+"0x55ddaf554650"->"0x55ddaf5546d0"
+edge [color=black];
+"0x55ddaf554650"->"0x55ddaf5544b0"
+edge [color=red];
+"0x55ddaf5544b0"->"0x55ddaf554650"
+edge [color=black];
+"0x55ddaf5544b0"->"0x55ddaf554430"
+edge [color=red];
+"0x55ddaf554430"->"0x55ddaf5544b0"
+edge [color=black];
+"0x55ddaf554430"->"(nil)"
+}

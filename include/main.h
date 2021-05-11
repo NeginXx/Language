@@ -18,11 +18,13 @@ enum RuntimeError {
 };
 
 enum SyntaxError {
+  kUnknownSyntaxError,
   kFuncVarDeclExpectedError,
   kFuncVarDeclErrorNameExpected,
+  kEqualAfterVarExpectedError,
   kVarDeclError,
   kStatementNewLineExpectedError,
-  kFuncDeclNewLineExpectedError,
+  kVarDeclNewLineExpectedError,
   kCommaParenthExpectedError,
   kVarDeclExpectedError,
   kVarNameExpectedError,
@@ -30,8 +32,8 @@ enum SyntaxError {
   kBracketCloseExpectedError,
   kParenthOpenExpectedError,
   kParenthCloseExpectedError,
-  kShit,
-  kShitt,
+  kStatementExpectedError,
+  kExpressionExpectedError,
   kCompSignExpectedError
 };
 

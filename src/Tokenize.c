@@ -93,14 +93,15 @@ int CodeConstruct(Code* code, int argc, const char** argv,
 Vector* not_freed_ptrs) {
 	$;
 	CATCH_ERROR(CodeConstructBufferFields(code, argc, argv,  not_freed_ptrs));
-	CATCH_ERROR(CodeConstructVector(&code->tokens,      not_freed_ptrs, sizeof(Token)));
+	CATCH_ERROR(CodeConstructVector(&code->tokens, not_freed_ptrs, sizeof(Token)));
 	RETURN 0;
 }
 
 bool IsSymbolDelimiter(char c) {
 	$;
-	char delim_syms[] = {'(', ')', '[', ']', '\0', '\n', ' ', '\t',
-											 '<', '>', '=', '!'};
+	char delim_syms[] = { '(', ')', '[', ']', ',', '=', '<',
+	                      '>', '!', '&', '|', '+', '-', '*',
+	                      '/', '\0', '\n', '\t', ' ' };
 	size_t sz = sizeof(delim_syms)/sizeof(delim_syms[0]);
 	for (size_t i = 0; i < sz; ++i) {
 		if (c == delim_syms[i]) {
@@ -162,9 +163,9 @@ bool IsKeyword(Code* code, Token* token) {
 		{"else", kElse, 0, 4},
 		{"break", kBreak, 0, 5},
 		{"continue", kContinue, 0, 8},
-		{"exit", kExit, 0, 4},
-		{"scan", kScan, 0, 4},
-		{"print", kPrint, 0, 5}
+		// {"exit", kExit, 0, 4},
+		// {"scan", kScan, 0, 4},
+		// {"print", kPrint, 0, 5}
 	};
 
 	size_t sz = sizeof(keywords) / sizeof(keywords[0]);

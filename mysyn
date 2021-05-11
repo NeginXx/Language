@@ -2,16 +2,25 @@ Decl = 'int' | 'float'
 
 Gram ::= { VarDecl | FuncDecl }+ '\0'
 
-FuncDecl  ::=  Decl Var ( { VarDecl {',', VarDecl }* }* ) StatBody
-Stat      ::=  Loop | If | VarDecl '\n' | FuncCall '\n' | 'return' { Expr } '\n' | continue '\n' | break '\n'
+FuncDecl  ::=  Decl Var ( { VarDeclInFunc {',', VarDeclInFunc }* }* ) StatBody
+Stat      ::=  Loop | If | VarDecl '\n' | FuncCall '\n' |
+               'return' { Expr } '\n' | continue '\n' |
+               break '\n' | Var = Expr '\n'
+
 Loop      ::=  'while' Cond StatBody
-If        ::=  'if' Cond StatBody { 'else if' Cond StatBody }* { 'else' StatBody }
+If        ::=  'if' Cond StatBody { 'else if' Cond StatBody }*
+                                  { 'else' StatBody }
 VarDecl   ::=  Decl Var { = Expr }*
-Cond      ::=  '(' Ineq ')'
+VarDeclInFunc ::= Decl Var
+
+Cond      ::=  '(' LogicExpr ')'
 StatBody  ::=  '[' Stat+ ']'
+
 Ineq      ::=  Expr { ['<', '>', '==', '!=', '<=', '>='] Expr }
-LogicExpr ::=  Ineq { ['&&', '||'] Ineq }*
+LogicExpr ::=  Or { '&&' Or }*
+Or        ::=  Ineq { '||' Ineq }*
 Expr      ::=  Mul  { ['+', '-'] Mul  }*
+
 Mul       ::=  Prim { ['*', '/'] Prim }*
 Prim      ::=  ( Expr ) | Num | Var | FuncCall
 FuncCall  ::=  Var ( { Expr { [',' Expr] }* }* )
