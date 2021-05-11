@@ -1,14 +1,11 @@
 #include <stdio.h>
-namespace Kek {
-	void sum(int a, int b) {
-		printf("%d\n", summ(a, b));
+int Factorial(int k, int (*func)(int, int(*)())) {
+	if (k <= 1) {
+		return 1;
 	}
-
-		int summ(int a, int b) {
-		return a + b;
-	}
+	return k * func(k - 1, func);
 }
 int main() {
-	default:
-	shit
+	printf("%d\n", Factorial(5, Factorial));
+	return 0;
 }

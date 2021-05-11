@@ -17,10 +17,10 @@ Cond      ::=  '(' LogicExpr ')'
 StatBody  ::=  '[' Stat+ ']'
 
 Ineq      ::=  Expr { ['<', '>', '==', '!=', '<=', '>='] Expr }
-LogicExpr ::=  Or { '&&' Or }*
-Or        ::=  Ineq { '||' Ineq }*
-Expr      ::=  Mul  { ['+', '-'] Mul  }*
+LogicExpr ::=  And { '||' And }*
+And       ::=  Ineq { '&&' Ineq }*
 
+Expr      ::=  Mul  { ['+', '-'] Mul  }*
 Mul       ::=  Prim { ['*', '/'] Prim }*
 Prim      ::=  ( Expr ) | Num | Var | FuncCall
 FuncCall  ::=  Var ( { Expr { [',' Expr] }* }* )

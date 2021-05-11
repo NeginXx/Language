@@ -34,7 +34,8 @@ enum SyntaxError {
   kParenthCloseExpectedError,
   kStatementExpectedError,
   kExpressionExpectedError,
-  kCompSignExpectedError
+  kCompSignExpectedError,
+  kUnexpectedSymbolError
 };
 
 enum VarType {
@@ -106,8 +107,7 @@ enum ArithOperator {
 
 enum BoolOperator {
   kAnd,
-  kOr,
-  kNot
+  kOr
 };
 
 union TokenVal {

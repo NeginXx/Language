@@ -250,6 +250,9 @@ void PrintSyntaxError(Text* text, Token* token, SyntaxError err) {
 		case kCompSignExpectedError:
 			fprintf(stderr, "expected compare sign\n\n");
 			break;
+		case kUnexpectedSymbolError:
+			fprintf(stderr, "unexpected symbol in expression\n\n");
+			break;
 		default:
 			fprintf(stderr, "can not recognize error code\n\n");
 	}

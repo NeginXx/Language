@@ -1,5 +1,5 @@
 Gpp = g++
-Flags = -g
+Flags = -g -Wall -Wextra -pedantic
 bin = bin
 src = src
 Objs = $(bin)/Tree.o           \

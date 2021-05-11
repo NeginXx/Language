@@ -10,6 +10,8 @@
 #include "../include/Tokenize.h"
 #include "../include/main.h"
 
+#define DEBUG
+
 int ER_ = 0;  // this variable is auxiliary and used only in macro
 #define CATCH_ERROR(func)   \
   if ((ER_ = func) != 0) {  \
@@ -79,7 +81,7 @@ namespace dot {
 		assert(file != NULL);
 		const char* comp_signs[] = {"less", "less equal", "greater", "greater equal", "==", "!="};
 		const char* arith_operators[] = {"+", "-", "*", "/"};
-		const char* bool_operators[] = {"&&", "||", "not !"};
+		const char* bool_operators[] = {"&&", "or"};
 		const char* decl_types[] = {"int", "float", "void"};
 		static const char* token_types[] = {"unknown",
                                         "elif",
@@ -156,8 +158,8 @@ namespace dot {
 	void NodeDump(Node* node, FILE* file, Node* parent) {
 		$;
 		assert(file != NULL);
-	  fprintf(file, "edge [color=black];\n");
-	  fprintf(file, "\"%p\"->\"%p\"\n", node, node->parent);
+	  // fprintf(file, "edge [color=black];\n");
+	  // fprintf(file, "\"%p\"->\"%p\"\n", node, node->parent);
 	  if (parent != NULL) {
 	    fprintf(file, "edge [color=red];\n");
 		  fprintf(file, "\"%p\"->\"%p\"\n", parent, node);
@@ -422,15 +424,23 @@ int FuncConstruct(CreateNodeArgs* args, Function* func) {
 }
 
 bool IsPlusOrMinus(Token* token) {
-	$;
-	assert(token != NULL);
+	$; assert(token != NULL); RETURN token->type == kArithOperator && (token->val.id == kPlus || token->val.id == kMinus);
+}
 
-	if (token->type != kArithOperator) {
-		RETURN false;
-	}
+bool IsMulOrDiv(Token* token) {
+	$; assert(token != NULL); RETURN token->type == kArithOperator && (token->val.id == kMul || token->val.id == kDiv);
+}
 
-	int id = token->val.id;
-	RETURN id == kPlus || id == kMinus;
+bool IsAndSign(Token* token) {
+	$; assert(token != NULL); RETURN token->type == kBoolOperator && token->val.id == kAnd;
+}
+
+bool IsOrSign(Token* token) {
+	$; assert(token != NULL); RETURN token->type == kBoolOperator && token->val.id == kOr;
+}
+
+bool IsCompSign(Token* token) {
+	$; assert(token != NULL); RETURN token->type == kComp;
 }
 
 int BranchNewNodeFromArgs(CreateNodeArgs* args, int (*func)(CreateNodeArgs*));
@@ -439,9 +449,139 @@ namespace create_node {
 	int VarDeclaration(CreateNodeArgs* args, bool is_global_var);
 	int Statement(CreateNodeArgs* args);
 	int FuncCall(CreateNodeArgs* args);
-	int Expr(CreateNodeArgs* args);
+	int Primary(CreateNodeArgs* args);
+	int Inequality(CreateNodeArgs* args);
 
-	// creates a new node
+	enum BinOpType {
+		kUnknownBinOpType,
+    kLogicExpr,
+    kAndOp,
+    kExpr,
+    kMinusOp,
+		kMulOp,
+		kDivOp
+	};
+
+	int op_type_type[] = {-1, kBoolOperator, kBoolOperator,
+												kArithOperator, kArithOperator,
+												kArithOperator, kArithOperator };
+	int op_type_id[] = { -1, kOr, kAnd, kPlus,
+		                   kMinus, kMul, kDiv };
+
+	bool BinOpIsNeededSign(Token* token, BinOpType op_type) {
+		$;
+		assert(token != NULL);
+		assert(op_type > 0);
+		RETURN token->type == op_type_type[op_type] &&
+		       token->val.id == op_type_id[op_type];
+	}
+
+	int BinOp(CreateNodeArgs* args, BinOpType op_type) {
+		$;
+		assert(args != NULL);
+		assert(args->tree != NULL);
+		assert(op_type > 0);
+
+		CreateNodeArgs new_args = {};
+		new_args.tree = args->tree;
+		if (op_type == kAndOp) {
+			CATCH_ERROR(create_node::Inequality(&new_args));
+		} else if (op_type == kDivOp) {
+			CATCH_ERROR(create_node::Primary(&new_args));
+		} else {
+			CATCH_ERROR(BinOp(&new_args, (BinOpType)((int)op_type + 1)));
+		}
+		if (new_args.is_error_occured) { args->is_error_occured = true; RETURN 0; }
+
+		Token* token = GetToken(args->tree);
+		if (!BinOpIsNeededSign(token, op_type)) {
+			args->node = new_args.node;
+			GetTokenStepBack(args->tree);
+			RETURN 0;
+		}
+
+		CATCH_ERROR(NewNode(&args->node, token));
+		ProcessCreatedNode(&new_args, args); 
+
+		while (BinOpIsNeededSign(token, op_type)) {
+			if (op_type == kAndOp) {
+				CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Inequality));
+			} else if (op_type == kDivOp) {
+				CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Primary));
+			} else {
+				new_args = MakeNewArgs(args);
+				CATCH_ERROR(BinOp(&new_args, (BinOpType)((int)op_type + 1)));
+				if (new_args.node != NULL) {
+					CATCH_ERROR(VectorPushback(args->node->children, &new_args.node, sizeof(Node*)));
+					new_args.node->parent = args->node;
+				}
+				if (new_args.is_error_occured) {
+					args->is_error_occured = true;
+				}
+			}
+	    if (args->is_error_occured) { RETURN 0; }
+	    token = GetToken(args->tree);
+		}
+
+		GetTokenStepBack(args->tree);	
+		RETURN 0;
+	}
+
+	// int Multiply(CreateNodeArgs* args) {
+	// 	$;
+	// 	assert(args != NULL);
+	// 	assert(args->tree != NULL);
+	// 	CREATE_BINOP_NODE(create_node::Primary, IsMulOrDiv);
+	// 	RETURN 0;
+	// }
+
+	int Expr(CreateNodeArgs* args) {
+		$;
+		assert(args != NULL);
+		assert(args->tree != NULL);
+		CATCH_ERROR(BinOp(args, kExpr));
+		RETURN 0;	
+	}
+
+	int Inequality(CreateNodeArgs* args) {
+		$;
+		assert(args != NULL);
+		assert(args->tree != NULL);
+		CreateNodeArgs new_args = {};
+		new_args.tree = args->tree;
+		CATCH_ERROR(create_node::Expr(&new_args));
+		if (new_args.is_error_occured) { RETURN 0; }
+
+		Token* token = GetToken(args->tree);
+		if (!IsCompSign(token)) {
+			args->node = new_args.node;
+			GetTokenStepBack(args->tree);
+			RETURN 0;
+		}
+
+		CATCH_ERROR(NewNode(&args->node, token));
+	  CATCH_ERROR(VectorPushback(args->node->children, &new_args.node, sizeof(Node*)));
+	  new_args.node->parent = args->node;
+	  CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Expr));
+		RETURN 0;
+	}
+
+	// int And(CreateNodeArgs* args) {
+	// 	$;
+	// 	assert(args != NULL);
+	// 	assert(args->tree != NULL);
+	// 	CREATE_BINOP_NODE(create_node::bin_op::Inequality, IsAndSign);
+	// 	RETURN 0;
+	// }
+
+	int LogicExpr(CreateNodeArgs* args) {
+		$;
+		assert(args != NULL);
+		assert(args->tree != NULL);
+		CATCH_ERROR(BinOp(args, kLogicExpr));
+		RETURN 0;	
+	}
+
 	int Primary(CreateNodeArgs* args) {
 		$;
 		assert(args != NULL);
@@ -461,7 +601,7 @@ namespace create_node {
 				break;
 
 			case kParenthO:
-				CATCH_ERROR(create_node::Expr(args));
+				CATCH_ERROR(create_node::LogicExpr(args));
 				// CATCH_ERROR(NewNode(&args->node, token));
 				// CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Expr));
 				if (GetToken(args->tree)->type != kParenthC) {
@@ -473,28 +613,6 @@ namespace create_node {
 				ProcessError({args, token, kExpressionExpectedError, NULL});
 		}
 
-		RETURN 0;
-	}
-
-	// creates a new node
-	int Expr(CreateNodeArgs* args) {
-		$;
-		assert(args != NULL);
-		assert(args->tree != NULL);
-		CATCH_ERROR(create_node::Primary(args));
-		if (args->is_error_occured) { RETURN 0; }
-
-		Token* token = GetToken(args->tree);
-		if (!IsPlusOrMinus(token)) {
-			GetTokenStepBack(args->tree);
-			RETURN 0;
-		}
-
-		Node* prim_node = NULL;
-		CATCH_ERROR(NewNode(&prim_node, token));
-		Swap(prim_node, args->node, sizeof(Node));
-		CATCH_ERROR(VectorPushback(args->node->children, &prim_node, sizeof(Node*)));
-		CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Expr));
 		RETURN 0;
 	}
 
@@ -531,44 +649,6 @@ namespace create_node {
 		RETURN 0;
 	}
 
-  // creates a node with binary operation token
-	int Inequality(CreateNodeArgs* args) {
-		$;
-		assert(args != NULL);
-		assert(args->tree != NULL);
-		CATCH_ERROR(NewNode(&args->node, NULL));
-		CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Expr));
-		if (args->is_error_occured) { RETURN 0; }
-
-		Token* token = GetToken(args->tree);
-		args->node->token = token;
-		if (token->type != kComp) {
-			ProcessError({args, token, kCompSignExpectedError, NULL});
-			RETURN 0;
-		}
-
-		CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Expr));
-		RETURN 0;
-	}
-
-	// int LogicExpr(CreateNodeArgs* args) {
-	// 	$;
-	// 	assert(args != NULL);
-	// 	assert(args->tree != NULL);
-	// 	CATCH_ERROR(NewNode(&args->node, NULL));
-	// 	CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Expr));
-	// 	if (args->is_error_occured) { RETURN 0; }
-
-	// 	Token* token = GetToken(args->tree);
-	// 	args->node->token = token;
-	// 	if (token->type != kAnd) {
-	// 		RETURN 0;
-	// 	}
-
-	// 	CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Expr));
-	// 	RETURN 0;
-	// }
-
 	int Condition(CreateNodeArgs* args) {
 		$;
 		assert(args != NULL);
@@ -579,9 +659,9 @@ namespace create_node {
 			RETURN 0;
 		}
 
-		CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Inequality));
+		CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::LogicExpr));
 		if (!args->is_error_occured && GetToken(args->tree)->type != kParenthC) {
-			ProcessError({args, token, kParenthCloseExpectedError, NULL});
+			ProcessError({args, token, kUnexpectedSymbolError, NULL});
 		}
 		RETURN 0;
 	}
@@ -625,19 +705,6 @@ namespace create_node {
 			CATCH_ERROR(create_node::StatementBody(args));
 			RETURN 0;
 		}
-
-		// int Else(CreateNodeArgs* args) {
-		// 	$;
-		// 	assert(args != NULL);
-		// 	assert(args->tree != NULL);
-		// 	CATCH_ERROR(create_node::Condition(args));
-		// 	if (args->is_error_occured) {
-		// 		ProcessErrorSkippingStatementBodyIfAny(args->tree);
-		// 		RETURN 0;
-		// 	}
-		// 	CATCH_ERROR(create_node::StatementBody(args));
-		// 	RETURN 0;
-		// }
 
 		int Return(CreateNodeArgs* args) {
 			$;
@@ -857,6 +924,7 @@ int BranchNewNodeFromArgs(CreateNodeArgs* args, int (*func)(CreateNodeArgs*)) {
 	CATCH_ERROR(func(&new_args));
 	if (new_args.node != NULL) {
 		CATCH_ERROR(VectorPushback(args->node->children, &new_args.node, sizeof(Node*)));
+		new_args.node->parent = args->node;
 	}
 	if (new_args.is_error_occured) {
 		args->is_error_occured = true;
@@ -912,6 +980,7 @@ int RootConstructCaseDecl(TreeInfo* tree, bool* syntax_error_occured) {
 	CATCH_ERROR(create_node::Declaration(&args));
 	if (args.node != NULL) {
 		CATCH_ERROR(VectorPushback(tree->root->children, &args.node, sizeof(Node*)));
+		args.node->parent = tree->root;
 	}
 	if (args.is_error_occured) {
 		*syntax_error_occured = true;
@@ -970,16 +1039,14 @@ Vector* not_freed_ptrs) {
 	RETURN 0;
 }
 
-void TieParents(Node* subroot, Node* parent) {
-	$;
-	assert(subroot != NULL);
-	subroot->parent = parent;
-	for (size_t i = 0; i < subroot->children->sz; ++i) {
-		TieParents(*(Node**)VectorGet(subroot->children, i, sizeof(Node*)), subroot);
-	}
-}
-
-#define DEBUG
+// void TieParents(Node* subroot, Node* parent) {
+// 	$;
+// 	assert(subroot != NULL);
+// 	subroot->parent = parent;
+// 	for (size_t i = 0; i < subroot->children->sz; ++i) {
+// 		TieParents(*(Node**)VectorGet(subroot->children, i, sizeof(Node*)), subroot);
+// 	}
+// }
 
 int main(int argc, const char** argv) {
 	$;
@@ -1005,14 +1072,14 @@ int main(int argc, const char** argv) {
 	Code code = {};
   CHECK_FOR_ERROR(CodeConstruct(&code, argc, argv, &not_freed_ptrs));
 	CHECK_FOR_ERROR(Tokenize(&code));
-	
+
 	// TokenDump(code.tokens, code.text);
 	// FreeAllMemory(&not_freed_ptrs);
 
 	TreeInfo tree_info = {};
 	CHECK_FOR_ERROR(TreeInfoConstruct(&tree_info, &code, &not_freed_ptrs));
 	CHECK_FOR_ERROR(TreeConstruct(&tree_info));
-	TieParents(tree_info.root, NULL);
+	// TieParents(tree_info.root, NULL);
 	dot::TreeDump(tree_info.root);
 	// FunctionsAndGlobalVarsDump(tree_info.global_vars, tree_info.functions);
 

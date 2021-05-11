@@ -336,9 +336,6 @@ int TokenizeOneLine(Code* code, bool* is_error_occured) {
 					++*ofs;
 					token.type = kComp;
 					token.val.id = kGreaterEqual;
-				} else {
-					token.type = kBoolOperator;
-					token.val.id = kNot;
 				}
 				break;
 
