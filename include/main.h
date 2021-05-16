@@ -2,19 +2,21 @@
 #include "Vector.h"
 #include "TextConstruct.h"
 
-static const char* kFileExtension = ".neg";
-
 enum RuntimeError {
   kNoError,
   kNotEnoughMemory,
   kFileExtensionError,
   kExcessArgsTerminal,
   kNoArgsTerminal,
+  kNoCompileFlag,
+  kNoInputFileFlag,
+  kWrongFileFlagFormat,
   kNoFileInDir,
   kEmptyFile,
+  kNoIolibFile,
   kUndefinedSymbols,
   kSyntaxError,
-  kFatalError
+  kCompilationError
 };
 
 enum SyntaxError {
@@ -36,6 +38,23 @@ enum SyntaxError {
   kExpressionExpectedError,
   kCompSignExpectedError,
   kUnexpectedSymbolError
+};
+
+enum CompilationError {
+  kUnknownCompilationError,
+  kNoReturnError,
+  kVoidReturnError,
+  kNonVoidReturnError,
+  kInvalidReturnTypeError,
+  kVarInitInvalidTypeError,
+  kNoSuchVarError,
+  kNoSuchFuncError,
+  kInvalidVarTypeError,
+  kDifferentTypeOperandsError,
+  kVoidFuncInExpr,
+  kIncorrectArgumentsNumToFunc,
+  kIncorrecArgumentType,
+  kVarRedeclaration
 };
 
 enum VarType {
@@ -110,6 +129,13 @@ enum BoolOperator {
   kOr
 };
 
+enum Register {
+  kEax,
+  kEbx,
+  kXmm0,
+  kXmm1
+};
+
 union TokenVal {
   int id;
   int int_val;
@@ -131,6 +157,7 @@ struct Token {
 struct Var {
   const char* name = NULL;
   VarType type = (VarType)0;
+  int stack_ofs = 0;
 };
 
 struct Function {
@@ -141,12 +168,6 @@ struct Function {
   Vector* local_vars = NULL; // Vector of Var
 };
 
-// struct Text {
-//   char* buf = NULL;
-//   char** lines = NULL;
-//   size_t size = 0;
-//   size_t lines_num = 0;
-// };
 struct Code {
   Text* text = NULL;
   Position pos = {};
@@ -160,11 +181,31 @@ struct Node {
   Token* token = NULL;
 };
 
-struct TreeInfo {
+struct TreeData {
   Node* root = NULL;
   Text* text = NULL;
   size_t token_idx = 0;
   Vector* tokens = NULL;      // Vector of Token
   Vector* global_vars = NULL; // Vector of Var
   Vector* functions = NULL;   // Vector of Function
+};
+
+struct CompilerData {
+  TreeData* tree = NULL;
+  FILE* file = NULL;
+  Vector* consts = NULL; // Vector of float
+  bool is_error_occured = false;
+};
+
+enum NodeType {
+  kUnknownNodeType,
+  kIntNodeType,
+  kFloatNodeType
+};
+
+struct CompilerArgs {
+  Node* cur_node = NULL;
+  size_t tabs_num = 0;
+  bool* is_return_found = NULL;
+  Function* cur_func = NULL;
 };

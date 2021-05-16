@@ -12,7 +12,7 @@
 
 #define DEBUG
 
-int ER_ = 0;  // this variable is auxiliary and used only in macro
+static int ER_ = 0;  // this variable is auxiliary and used only in macro
 #define CATCH_ERROR(func)   \
   if ((ER_ = func) != 0) {  \
     RETURN ER_;             \
@@ -50,15 +50,6 @@ void NodeDump(Node* node, const char* str) {
 	
 	printf("token pos = %s\n%lu\n", node->token->pos.ofs, node->token->pos.line);
 	printf("------------------------\n\n");
-	$$;
-}
-
-void Swap(void* ptr0, void* ptr1, size_t sz) {
-	$;
-	char temp[sz];
-	memcpy(temp, ptr0, sz);
-	memcpy(ptr0, ptr1, sz);
-	memcpy(ptr1, temp, sz);
 	$$;
 }
 
@@ -171,16 +162,16 @@ namespace dot {
 		$;
 		assert(file != NULL);
 
-		NodeDeclare(node, file);
+		dot::NodeDeclare(node, file);
 		if (node == NULL) {
 			RETURN;
 		}
 
 		for (size_t i = 0; i < node->children->sz; ++i) {
 			Node* child = *(Node**)VectorGet(node->children, i, sizeof(Node*));
-			SubtreeDump(child, file, node);
+			dot::SubtreeDump(child, file, node);
 		}
-		NodeDump(node, file, parent);
+		dot::NodeDump(node, file, parent);
 		$$;
 	}
 
@@ -197,7 +188,7 @@ namespace dot {
 		fprintf(file, "node [shape = \"record\","
 			            " style = \"filled\", fillcolor = "
 			            "\"%s\"]\n", kRGBColorBlue);
-		SubtreeDump(root, file, NULL);
+		dot::SubtreeDump(root, file, NULL);
 		fprintf(file, "}\n");
 
 		fclose(file);
@@ -209,18 +200,6 @@ namespace dot {
 	  system(cmd);
 	  $$;
 	}
-}
-
-void FreeAllMemory(Vector* not_freed_ptrs) {
-	$;
-	// void** not_freed_ptr = (void**)not_freed_ptrs->arr;
-	// size_t sz = not_freed_ptrs->sz;
-	// for (size_t i = 0; i < sz; ++i) {
-	// 	printf("fre: %p\n", *not_freed_ptr);
-	// 	free(*not_freed_ptr++);
-	// }
-	// VectorDestroy(not_freed_ptrs);
-	$$;
 }
 
 int NewNode(Node** node, Token* token) {
@@ -238,7 +217,7 @@ int NewNode(Node** node, Token* token) {
 	RETURN 0;
 }
 
-Token* GetToken(TreeInfo* tree) {
+Token* GetToken(TreeData* tree) {
 	$;
 	assert(tree != NULL);
 	Token* token = (Token*)VectorGet(tree->tokens, tree->token_idx, sizeof(Token));
@@ -246,27 +225,27 @@ Token* GetToken(TreeInfo* tree) {
 	RETURN token;
 }
 
-Token* GetTokenWithoutAdvancing(TreeInfo* tree) {
+Token* GetTokenWithoutAdvancing(TreeData* tree) {
 	$;
 	assert(tree != NULL);
 	Token* token = (Token*)VectorGet(tree->tokens, tree->token_idx, sizeof(Token));
 	RETURN token;
 }
 
-Token* GetPreviousToken(TreeInfo* tree) {
+Token* GetPreviousToken(TreeData* tree) {
 	$;
 	assert(tree != NULL);
 	RETURN (Token*)VectorGet(tree->tokens, tree->token_idx - 1, sizeof(Token));
 }
 
-void GetTokenStepBack(TreeInfo* tree) {
+void GetTokenStepBack(TreeData* tree) {
 	$;
 	assert(tree != NULL);
 	--tree->token_idx;
 	$$;
 }
 
-int TokenAdvOnNewLine(TreeInfo* tree) {
+int TokenAdvOnNewLine(TreeData* tree) {
 	$;
 	assert(tree != NULL);
 	Token* token = GetToken(tree);
@@ -276,7 +255,7 @@ int TokenAdvOnNewLine(TreeInfo* tree) {
 	RETURN 0;
 }
 
-void SkipNewLineIfAny(TreeInfo* tree) {
+void SkipNewLineIfAny(TreeData* tree) {
 	$;
 	assert(tree != NULL);
 	if (GetTokenWithoutAdvancing(tree)->type == kNewLine) {
@@ -289,7 +268,7 @@ int NodePushback(Vector* vec, Node** node_ptr) {
 	return VectorPushback(vec, node_ptr, sizeof(Node*));
 }
 
-void FindNearestOpenBracket(TreeInfo* tree, bool* is_open_brack_found_near) {
+void FindNearestOpenBracket(TreeData* tree, bool* is_open_brack_found_near) {
 	$;
 	assert(tree != NULL);
 	assert(is_open_brack_found_near != NULL);
@@ -312,12 +291,12 @@ void FindNearestOpenBracket(TreeInfo* tree, bool* is_open_brack_found_near) {
 	}
 }
 
-int ProcessErrorSkippingStatementBodyIfAny(TreeInfo* tree);
+int ProcessErrorSkippingStatementBodyIfAny(TreeData* tree);
 // skips to new line or end of statement body whichether comes first
-int SkipToNewLineOrEndOfStatementBody(TreeInfo* tree);
+int SkipToNewLineOrEndOfStatementBody(TreeData* tree);
 
 struct CreateNodeArgs {
-	TreeInfo* tree = NULL;
+	TreeData* tree = NULL;
 	Node* node = NULL;
 	bool is_error_occured = false;
 };
@@ -343,12 +322,12 @@ struct ProcessErrorArgs {
 	CreateNodeArgs* create_node_args = NULL;
 	Token* token = NULL;
 	SyntaxError err = kUnknownSyntaxError;
-	int (*func)(TreeInfo*) = NULL;
+	int (*func)(TreeData*) = NULL;
 };
 int ProcessError(ProcessErrorArgs args) {
 	$;
 	assert(args.create_node_args != NULL);
-	TreeInfo* tree = args.create_node_args->tree;
+	TreeData* tree = args.create_node_args->tree;
 	assert(tree != NULL);
 	assert(args.token != NULL);
 
@@ -527,14 +506,6 @@ namespace create_node {
 		RETURN 0;
 	}
 
-	// int Multiply(CreateNodeArgs* args) {
-	// 	$;
-	// 	assert(args != NULL);
-	// 	assert(args->tree != NULL);
-	// 	CREATE_BINOP_NODE(create_node::Primary, IsMulOrDiv);
-	// 	RETURN 0;
-	// }
-
 	int Expr(CreateNodeArgs* args) {
 		$;
 		assert(args != NULL);
@@ -565,14 +536,6 @@ namespace create_node {
 	  CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Expr));
 		RETURN 0;
 	}
-
-	// int And(CreateNodeArgs* args) {
-	// 	$;
-	// 	assert(args != NULL);
-	// 	assert(args->tree != NULL);
-	// 	CREATE_BINOP_NODE(create_node::bin_op::Inequality, IsAndSign);
-	// 	RETURN 0;
-	// }
 
 	int LogicExpr(CreateNodeArgs* args) {
 		$;
@@ -620,10 +583,7 @@ namespace create_node {
 		$;
 		assert(args != NULL);
 		assert(args->tree != NULL);
-
-		if (GetToken(args->tree)->type != kParenthO) {
-			RETURN kFatalError;
-		}
+		assert(GetToken(args->tree)->type == kParenthO);
 
 		Token* token = GetTokenWithoutAdvancing(args->tree);
 		if (token->type == kParenthC) {
@@ -660,7 +620,8 @@ namespace create_node {
 		}
 
 		CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::LogicExpr));
-		if (!args->is_error_occured && GetToken(args->tree)->type != kParenthC) {
+		token = GetToken(args->tree);
+		if (!args->is_error_occured && token->type != kParenthC) {
 			ProcessError({args, token, kUnexpectedSymbolError, NULL});
 		}
 		RETURN 0;
@@ -855,7 +816,7 @@ namespace create_node {
 		if (token->type == kNewLine) {
 			GetTokenStepBack(args->tree);
 		} else if (token->type == kEqual) {
-			CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::Expr));
+			CATCH_ERROR(BranchNewNodeFromArgs(args, create_node::LogicExpr));
 		} else {
 			ProcessError({args, token, kVarDeclError, NULL});
 		}
@@ -867,14 +828,11 @@ namespace create_node {
 		$;
 		assert(args != NULL);
 		assert(args->tree != NULL);
-
-		Token* token = GetToken(args->tree);
-		if (token->type != kParenthO) {
-			RETURN kFatalError;
-		}
+		assert(GetToken(args->tree)->type == kParenthO);
 
 		Function func = {};
 		func.name = ((Token*)VectorGet(args->tree->tokens, args->tree->token_idx - 2, sizeof(Token)))->val.name;
+		func.type = (FuncType)((Token*)VectorGet(args->tree->tokens, args->tree->token_idx - 3, sizeof(Token)))->val.id;
 		CATCH_ERROR(FuncConstruct(args, &func));
 		CATCH_ERROR(VectorPushback(args->tree->functions, &func, sizeof(Function)));
 		if (args->is_error_occured) {
@@ -933,15 +891,13 @@ int BranchNewNodeFromArgs(CreateNodeArgs* args, int (*func)(CreateNodeArgs*)) {
 	RETURN 0;
 }
 
-int ProcessErrorSkippingStatementBodyIfAny(TreeInfo* tree) {
+int ProcessErrorSkippingStatementBodyIfAny(TreeData* tree) {
 	$;
 	assert(tree != NULL);
 
 	bool is_open_brack_found_near = false;
 	FindNearestOpenBracket(tree, &is_open_brack_found_near);
 	if (is_open_brack_found_near) {
-		bool is_error_occured = false;
-		bool is_error_processed = false;
 		CreateNodeArgs args = {tree, tree->root, false};
 		CATCH_ERROR(create_node::StatementBody(&args));
 	}
@@ -950,7 +906,7 @@ int ProcessErrorSkippingStatementBodyIfAny(TreeInfo* tree) {
 }
 
 // skips to new line or end of statement body whichether comes first
-int SkipToNewLineOrEndOfStatementBody(TreeInfo* tree) {
+int SkipToNewLineOrEndOfStatementBody(TreeData* tree) {
 	$;
 	assert(tree != NULL);
 	int bracket_count = 0;
@@ -972,7 +928,7 @@ int SkipToNewLineOrEndOfStatementBody(TreeInfo* tree) {
 	RETURN 0;
 }
 
-int RootConstructCaseDecl(TreeInfo* tree, bool* syntax_error_occured) {
+int RootConstructCaseDecl(TreeData* tree, bool* syntax_error_occured) {
 	$;
 	assert(tree != NULL);
 	assert(syntax_error_occured != NULL);
@@ -988,11 +944,107 @@ int RootConstructCaseDecl(TreeInfo* tree, bool* syntax_error_occured) {
 	RETURN 0;
 }
 
-int TreeConstruct(TreeInfo* tree) {
+int AddStandardFunction(TreeData* tree_data, const char* name,
+FuncType type, size_t args_num,
+VarType* args_types) {
+	$;
+	assert(tree_data != NULL);
+	assert(name != NULL);
+	assert(args_types != NULL);
+
+	Function func = {name, type, 1, NULL, NULL};
+	CATCH_ERROR(NewVector(&func.args, sizeof(Var)));
+	CATCH_ERROR(NewVector(&func.local_vars, sizeof(Var)));
+	for (size_t i = 0; i < args_num; ++i) {
+		Var argument = {NULL, args_types[i], 0};
+		CATCH_ERROR(VectorPushback(func.args, &argument, sizeof(Var)));
+	}
+	CATCH_ERROR(VectorPushback(tree_data->functions, &func, sizeof(Function)));
+
+	RETURN 0;
+}
+
+int AddStandardFunctions(TreeData* tree_data) {
+	$;
+	assert(tree_data != NULL);
+
+	VarType args_types[1] = {};
+	args_types[0] = kVarInt;
+	CATCH_ERROR(AddStandardFunction(tree_data, "exit",
+		                              kFuncVoid, 1, args_types));
+
+	CATCH_ERROR(AddStandardFunction(tree_data, "fscan",
+		                              kFuncFloat, 0, args_types));
+
+	CATCH_ERROR(AddStandardFunction(tree_data, "dscan",
+		                              kFuncInt, 0, args_types));
+
+	args_types[0] = kVarFloat;
+	CATCH_ERROR(AddStandardFunction(tree_data, "fprint",
+		                              kFuncVoid, 1, args_types));
+
+	args_types[0] = kVarInt;
+	CATCH_ERROR(AddStandardFunction(tree_data, "dprint",
+		                              kFuncVoid, 1, args_types));
+
+	RETURN 0;
+}
+
+int TreeDataConstructVector(Vector** vec_ptr,
+Vector* smart_ptrs, size_t type_sz) {
+	$;
+	CATCH_ERROR(NewVector(vec_ptr, type_sz));
+	CATCH_ERROR(VectorPushback(smart_ptrs, &((*vec_ptr)->arr), sizeof((*vec_ptr)->arr)));
+	CATCH_ERROR(VectorPushback(smart_ptrs, vec_ptr, sizeof(*vec_ptr)));
+	RETURN 0;
+}
+
+int TreeDataConstruct(TreeData* tree, Code* code,
+Vector* smart_ptrs) {
 	$;
 	assert(tree != NULL);
+	assert(code != NULL);
 
+	tree->text = code->text;
+	tree->tokens = code->tokens;
+	CATCH_ERROR(TreeDataConstructVector(&tree->global_vars, smart_ptrs, sizeof(Var)));
+	CATCH_ERROR(TreeDataConstructVector(&tree->functions,   smart_ptrs, sizeof(Function)));
 	CATCH_ERROR(NewNode(&tree->root, NULL));
+
+	if (GetTokenWithoutAdvancing(tree)->type == kNewLine) {
+		++tree->token_idx;
+	}
+
+	RETURN 0;
+}
+
+void SetStackOffsets(Vector* functions) {
+	$;
+	assert(functions != NULL);
+	int offsets[2] = {4, 4};
+	for (size_t i = 0; i < functions->sz; ++i) {
+		Function* func = (Function*)VectorGet(functions, i, sizeof(Function));
+		Vector* args = func->args;
+		int stack_ofs = 16;
+		for (int idx = args->sz - 1; idx >= 0; --idx) {
+			Var* var = (Var*)VectorGet(args, idx, sizeof(Var));
+			var->stack_ofs = stack_ofs;
+			assert(var->type == kVarInt || var->type == kVarFloat);
+			stack_ofs += offsets[var->type];
+		}
+	}
+	$$;
+}
+
+int TreeConstruct(TreeData* tree_data, Code* code,
+Vector* smart_ptrs) {
+	$;
+	TreeData* tree = tree_data;
+	assert(tree != NULL);
+	assert(code != NULL);
+	assert(smart_ptrs != NULL);
+
+	CATCH_ERROR(TreeDataConstruct(tree, code, smart_ptrs));
 	bool syntax_error_occured = false;
 
 	while (tree->token_idx < tree->tokens->sz) {
@@ -1009,80 +1061,7 @@ int TreeConstruct(TreeInfo* tree) {
 		}
 	}
 
+	CATCH_ERROR(AddStandardFunctions(tree));
+	SetStackOffsets(tree->functions);
 	RETURN syntax_error_occured ? kSyntaxError : 0;
-}
-
-int TreeInfoConstructVector(Vector** vec_ptr,
-Vector* not_freed_ptrs, size_t type_sz) {
-	$;
-	CATCH_ERROR(NewVector(vec_ptr, type_sz));
-	CATCH_ERROR(VectorPushback(not_freed_ptrs, &((*vec_ptr)->arr), sizeof((*vec_ptr)->arr)));
-	CATCH_ERROR(VectorPushback(not_freed_ptrs, vec_ptr, sizeof(*vec_ptr)));
-	RETURN 0;
-}
-
-int TreeInfoConstruct(TreeInfo* tree_info, Code* code,
-Vector* not_freed_ptrs) {
-	$;
-	assert(tree_info != NULL);
-	assert(code != NULL);
-
-	tree_info->text = code->text;
-	tree_info->tokens = code->tokens;
-	CATCH_ERROR(TreeInfoConstructVector(&tree_info->global_vars, not_freed_ptrs, sizeof(Var)));
-	CATCH_ERROR(TreeInfoConstructVector(&tree_info->functions,   not_freed_ptrs, sizeof(Function)));
-
-	if (GetTokenWithoutAdvancing(tree_info)->type == kNewLine) {
-		++tree_info->token_idx;
-	}
-
-	RETURN 0;
-}
-
-// void TieParents(Node* subroot, Node* parent) {
-// 	$;
-// 	assert(subroot != NULL);
-// 	subroot->parent = parent;
-// 	for (size_t i = 0; i < subroot->children->sz; ++i) {
-// 		TieParents(*(Node**)VectorGet(subroot->children, i, sizeof(Node*)), subroot);
-// 	}
-// }
-
-int main(int argc, const char** argv) {
-	$;
-	signal(SIGSEGV, PrintStackInfoAndExit);
-	signal(SIGABRT, PrintStackInfoAndExit);
-
-	#ifdef DEBUG
-		argc = 2;
-		const char* argvv[2] = {"./file", "prog.neg"};
-		argv = argvv;
-	#endif
-
-	int err = 0;
-	#define CHECK_FOR_ERROR(func)       \
-		if ((err = func) != 0) {          \
-			PrintErrorInfo((RuntimeError)err);\
-			FreeAllMemory(&not_freed_ptrs); \
-			RETURN err;                     \
-		}
-
-	Vector not_freed_ptrs = {};
-	CHECK_FOR_ERROR(VectorConstruct(&not_freed_ptrs, sizeof(void*)));
-	Code code = {};
-  CHECK_FOR_ERROR(CodeConstruct(&code, argc, argv, &not_freed_ptrs));
-	CHECK_FOR_ERROR(Tokenize(&code));
-
-	// TokenDump(code.tokens, code.text);
-	// FreeAllMemory(&not_freed_ptrs);
-
-	TreeInfo tree_info = {};
-	CHECK_FOR_ERROR(TreeInfoConstruct(&tree_info, &code, &not_freed_ptrs));
-	CHECK_FOR_ERROR(TreeConstruct(&tree_info));
-	// TieParents(tree_info.root, NULL);
-	dot::TreeDump(tree_info.root);
-	// FunctionsAndGlobalVarsDump(tree_info.global_vars, tree_info.functions);
-
-	printf("compilation finished successfully\n");
-	RETURN 0;
 }

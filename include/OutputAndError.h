@@ -7,3 +7,4 @@ void PrintStrWithUnderline(char* str, char* ofs);
 void ErrorUnknownSymbol(Code* code);
 void ErrorNotDoubledSign(Code* code, char sign);
 void PrintSyntaxError(Text* text, Token* token, SyntaxError err);
+void PrintCompilationError(Text* text, Token* token, CompilationError err);

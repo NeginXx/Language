@@ -131,16 +131,28 @@ void FunctionsAndGlobalVarsDump(Vector* global_vars, Vector* functions) {
 void PrintErrorInfo(RuntimeError err) {
 	switch (err) {
 		case kFileExtensionError:
-			fprintf(stderr, "error: file format not recognized\n");
+			fprintf(stderr, "error: file format not recognized\nShould be .neg\n");
 			break;
 		case kExcessArgsTerminal:
-			fprintf(stderr, "error: expected only file name, but excess arguments found\n");
+			fprintf(stderr, "error: too many arguments in command line\nType -h for help\n");
 			break;
 		case kNoArgsTerminal:
-			fprintf(stderr, "error: no arguments in terminal, specify file name\n");
+			fprintf(stderr, "error: no arguments in terminal\nNeed help? Specify -h\n");
+			break;
+		case kNoInputFileFlag:
+			fprintf(stderr, "error: compilation flags were specified, no file name tho\nTry -h for help\n");
+			break;
+		case kWrongFileFlagFormat:
+			fprintf(stderr, "error: -o found, no file specified tho\n");
+			break;
+		case kNoCompileFlag:
+			fprintf(stderr, "error: file name is specified, no compilation flags tho\n");
 			break;
 		case kNotEnoughMemory:
 			fprintf(stderr, "error: not enough memory to compile\n");
+			break;
+		case kNoIolibFile:
+			fprintf(stderr, "error: couldn't find iolib.asm file in directory\n");
 			break;
 		case kNoFileInDir:
 			fprintf(stderr, "error: can not open file, probably it's not in the current directory\n");
@@ -148,11 +160,9 @@ void PrintErrorInfo(RuntimeError err) {
 		case kEmptyFile:
 			fprintf(stderr, "error: file is empty\n");
 			break;
-		case kFatalError:
-			fprintf(stderr, "FATAL ERROR occured\nCompilation is interrupted\n");
-			break;
 		case kUndefinedSymbols:
 		case kSyntaxError:
+		case kCompilationError:
 			break;
 		default:
 			fprintf(stderr, "error: unknown error code %d\n", err);
@@ -252,6 +262,59 @@ void PrintSyntaxError(Text* text, Token* token, SyntaxError err) {
 			break;
 		case kUnexpectedSymbolError:
 			fprintf(stderr, "unexpected symbol in expression\n\n");
+			break;
+		default:
+			fprintf(stderr, "can not recognize error code\n\n");
+	}
+}
+
+void PrintCompilationError(Text* text, Token* token, CompilationError err) {
+	$;
+	assert(text != NULL);
+	assert(token != NULL);
+
+	Position pos = token->pos;
+	fprintf(stderr, "error: compilation error on line %lu\n", pos.line + 1);
+	PrintStrWithUnderline(text->lines[token->pos.line], token->pos.ofs);
+	switch (err) {
+		case kNoReturnError:
+			fprintf(stderr, "nonvoid function with no return\n\n");
+			break;
+		case kVoidReturnError:
+		  fprintf(stderr, "empty return in nonvoid function\n\n");
+		  break;
+		case kNonVoidReturnError:
+			fprintf(stderr, "return of expression in void function\n\n");
+			break;
+		case kInvalidReturnTypeError:
+			fprintf(stderr, "return expression type does not match function type\n\n");
+			break;
+		case kVarInitInvalidTypeError:
+			fprintf(stderr, "variable and expression have different types\n\n");
+			break;
+		case kNoSuchVarError:
+			fprintf(stderr, "reference to undeclared variable\n\n");
+			break;
+		case kNoSuchFuncError:
+			fprintf(stderr, "reference to undeclared function\n\n");
+			break;
+		case kInvalidVarTypeError:
+			fprintf(stderr, "invalid variable declaration, variables can only be int or float\n\n");
+			break;
+		case kDifferentTypeOperandsError:
+			fprintf(stderr, "operands to binary operation have different types\n\n");
+			break;
+		case kVoidFuncInExpr:
+			fprintf(stderr, "void function used in expression\n\n");
+			break;
+		case kIncorrectArgumentsNumToFunc:
+			fprintf(stderr, "number of function arguments doesn't match with declaration\n\n");
+			break;
+		case kIncorrecArgumentType:
+			fprintf(stderr, "function argument type doesn't match with declaration\n\n");
+			break;
+		case kVarRedeclaration:
+			fprintf(stderr, "redeclaration of variable\n\n");
 			break;
 		default:
 			fprintf(stderr, "can not recognize error code\n\n");

@@ -111,6 +111,12 @@ void* VectorGet(Vector* vec, size_t idx, size_t type_sz) {
 	return (char*)vec->arr + idx * type_sz;
 }
 
+void* VectorBack(Vector* vec, size_t type_sz) {
+	assert(vec != NULL);
+	assert(vec->sz >= 1);
+	return (char*)vec->arr + (vec->sz - 1) * type_sz;
+}
+
 void VectorDestroy(Vector* vec) {
 	$;
 	free(vec->arr);

@@ -22,7 +22,7 @@ And       ::=  Ineq { '&&' Ineq }*
 
 Expr      ::=  Mul  { ['+', '-'] Mul  }*
 Mul       ::=  Prim { ['*', '/'] Prim }*
-Prim      ::=  ( Expr ) | Num | Var | FuncCall
+Prim      ::=  ( LogicExpr ) | Num | Var | FuncCall
 FuncCall  ::=  Var ( { Expr { [',' Expr] }* }* )
 Var       ::=  { ['a' - 'Z', '_'] }+ { ['0' - '9'] }*
 Num       ::=  { ['0' - '9'] }+ { '.' ['0' - '9'] }

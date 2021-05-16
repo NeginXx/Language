@@ -1,17 +1,20 @@
 global _start
 section .text
+ScanOneSymbol:
+
+func:
+	push rbp
+	mov rbp, rsp
+	mov rbx, [rbp + 16]
+	leave
+	ret
 
 _start:
-	  mov  rdi, 1
-	  mov  rsi, printf_buffer
-	  mov  rdx, 4 ; printf_buffer size
-	  mov  rax, 1 ; syscall number
-	  syscall
+	push 5
+	call func
 
-  EOprogram:            
-	  mov  rax, 60     
-	  xor  rdi, rdi    
-	  syscall
-
-section .data
-printf_buffer: db '345', 10, 0
+	xor rax, rax
+	mov eax, [rsp + 8]
+	mov rdi, rax
+	mov  rax, 60
+	syscall

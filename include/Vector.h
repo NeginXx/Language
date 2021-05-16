@@ -20,3 +20,4 @@ int VectorConstruct(Vector* vec, size_t type_sz);
 int VectorPushback(Vector* vec, const void* val, size_t type_sz);
 void VectorDestroy(Vector* vec);
 void* VectorGet(Vector* vec, size_t idx, size_t type_sz);
+void* VectorBack(Vector* vec, size_t type_sz);

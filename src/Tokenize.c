@@ -24,39 +24,19 @@ void OfsAdv(Code* code) {
   $$;
 }
 
-int CheckTerminalArgsCorrectness(int argc, const char** argv) {
+int CodeConstructBufferFields(Code* code, const char* file_name,
+Vector* smart_ptrs) {
 	$;
-	assert(argc >= 0);
-	assert(argv != NULL);
-
-	if (argc > 2) {
-		RETURN kExcessArgsTerminal;
-	} else if (argc < 2) {
-		RETURN kNoArgsTerminal;
-	} else {
-		const char* dot = strchr(argv[1], '.');
-		if (dot == NULL || strcmp(dot, kFileExtension) != 0) {
-			RETURN kFileExtensionError;
-		}
-	}
-
-	RETURN 0;
-}
-
-int CodeConstructBufferFields(Code* code, int argc, const char** argv,
-Vector* not_freed_ptrs) {
-	$;
-	assert(argc != 0);
 	assert(code != NULL);
-	assert(argv != NULL);
+	assert(file_name != NULL);
+	assert(smart_ptrs != NULL);
 
-	CATCH_ERROR(CheckTerminalArgsCorrectness(argc, argv));
-	FILE* file = fopen(argv[1], "r");
+	FILE* file = fopen(file_name, "r");
 	if (file == NULL) {
 		RETURN kNoFileInDir;
 	}
 
-	size_t sz = SizeOfFile(argv[1]);
+	size_t sz = SizeOfFile(file_name);
 	if (sz == 0) {
 		fclose(file);
 		RETURN kEmptyFile;
@@ -67,33 +47,29 @@ Vector* not_freed_ptrs) {
 	if (err != 0) {
 		RETURN err;
 	}
-	CATCH_ERROR(VectorPushback(not_freed_ptrs, &code->text->buf, sizeof(code->text->buf)));
-	CATCH_ERROR(VectorPushback(not_freed_ptrs, &code->text->lines, sizeof(code->text->lines)));
-	CATCH_ERROR(VectorPushback(not_freed_ptrs, &code->text, sizeof(code->text)));
+	CATCH_ERROR(VectorPushback(smart_ptrs, &code->text->buf, sizeof(code->text->buf)));
+	CATCH_ERROR(VectorPushback(smart_ptrs, &code->text->lines, sizeof(code->text->lines)));
+	CATCH_ERROR(VectorPushback(smart_ptrs, &code->text, sizeof(code->text)));
 	code->pos.ofs = code->text->lines[0];
 	code->pos.line = 0;
 
 	CATCH_ERROR(NewNamesBuf(&code->names_buf));
-	CATCH_ERROR(VectorPushback(not_freed_ptrs, &code->names_buf->buf, sizeof(code->names_buf->buf)));
-	CATCH_ERROR(VectorPushback(not_freed_ptrs, &code->names_buf, sizeof(code->names_buf)));
+	CATCH_ERROR(VectorPushback(smart_ptrs, &code->names_buf->buf, sizeof(code->names_buf->buf)));
+	CATCH_ERROR(VectorPushback(smart_ptrs, &code->names_buf, sizeof(code->names_buf)));
 
 	RETURN 0;
 }
 
-int CodeConstructVector(Vector** code_vec_ptr,
-Vector* not_freed_ptrs, size_t type_sz) {
+int CodeConstruct(Code* code, const char* file_name,
+Vector* smart_ptrs) {
 	$;
-	CATCH_ERROR(NewVector(code_vec_ptr, type_sz));
-	CATCH_ERROR(VectorPushback(not_freed_ptrs, &((*code_vec_ptr)->arr), sizeof((*code_vec_ptr)->arr)));
-	CATCH_ERROR(VectorPushback(not_freed_ptrs, code_vec_ptr, sizeof(*code_vec_ptr)));
-	RETURN 0;
-}
-
-int CodeConstruct(Code* code, int argc, const char** argv,
-Vector* not_freed_ptrs) {
-	$;
-	CATCH_ERROR(CodeConstructBufferFields(code, argc, argv,  not_freed_ptrs));
-	CATCH_ERROR(CodeConstructVector(&code->tokens, not_freed_ptrs, sizeof(Token)));
+	assert(code != NULL);
+	assert(file_name != NULL);
+	assert(smart_ptrs != NULL);
+	CATCH_ERROR(CodeConstructBufferFields(code, file_name, smart_ptrs));
+	CATCH_ERROR(NewVector(&code->tokens, sizeof(Token)));
+	CATCH_ERROR(VectorPushback(smart_ptrs, &(code->tokens->arr), sizeof(code->tokens->arr)));
+	CATCH_ERROR(VectorPushback(smart_ptrs, &code->tokens, sizeof(code->tokens)));
 	RETURN 0;
 }
 

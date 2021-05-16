@@ -1,20 +1,40 @@
-float global_var = 1.1
-void Shit(float d) [
-	int a = 0
-	if ((d < 2 || d + 3 > 11 - 2 || a) && (4 < 5)) [
-		print(2.2)
-		return
-	]
-	print(12 * 4 * a * b)
+int sum(int a, int b) [
+	return a + b
 ]
-int main() [
-	int a = 3
-	if (a <= 3) [
-		return 4.3
-	] else if (a > 5) [
-		Shit(a + (b + 4 / 3.2) + c + 1)
-	] else [
-		return 25 * 4
-	]
+
+float fsum(float a, float b) [
+	return a + b
+]
+
+int Main() [
+	dprint(sum(4, 3))
+	fprint(fsum(334.14, 5.1))
 	return 0
 ]
+
+// float global_var = 1.1
+
+// void empty() [
+// ]
+
+// void Shit(float d) [
+// 	int a = 0
+// 	a = 5
+// 	if ((d < 2 || d + 3 > 11 - 2 || a) && (4 < 5)) [
+// 		print(2.2)
+// 		return
+// 	]
+// 	print(12 * 4 * a * b)
+// ]
+
+// int main() [
+// 	int a = 3
+// 	if (a < 2) [
+// 		return 4.3
+// 	] else if (a > 5) [
+// 		Shit(a + (b + 4 / 3.2) + c + 1)
+// 	] else [
+// 		return 25 * 4
+// 	]
+// 	return 0
+// ]

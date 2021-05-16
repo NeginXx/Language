@@ -1,187 +1,40 @@
 digraph G {
 node [shape = "record", style = "filled", fillcolor = "#006FFF"]
-	"0x55cf7ecd1020" [fillcolor = "#B300FF", label = "root"]
-	"0x55cf7ecd10a0" [fillcolor = "#B300FF", label = "var | float | global_var"]
-	"0x55cf7ecd1120" [fillcolor = "#B300FF", label = "float num | 1.100000"]
+	"0x55555556c5e0" [fillcolor = "#B300FF", label = "root"]
+	"0x55555556c660" [fillcolor = "#B300FF", label = "func | float | sum"]
+	"0x55555556c800" [fillcolor = "#B300FF", label = "return"]
+	"0x55555556c900" [fillcolor = "#B300FF", label = "arith op | +"]
+	"0x55555556c880" [fillcolor = "#B300FF", label = "var | a"]
 edge [color=red];
-"0x55cf7ecd10a0"->"0x55cf7ecd1120"
+"0x55555556c900"->"0x55555556c880"
+	"0x55555556c980" [fillcolor = "#B300FF", label = "var | b"]
 edge [color=red];
-"0x55cf7ecd1020"->"0x55cf7ecd10a0"
-	"0x55cf7ecd11a0" [fillcolor = "#B300FF", label = "func | void | Shit"]
-	"0x55cf7ecd1340" [fillcolor = "#B300FF", label = "var | int | a"]
-	"0x55cf7ecd13c0" [fillcolor = "#B300FF", label = "int num | 0"]
+"0x55555556c900"->"0x55555556c980"
 edge [color=red];
-"0x55cf7ecd1340"->"0x55cf7ecd13c0"
+"0x55555556c800"->"0x55555556c900"
 edge [color=red];
-"0x55cf7ecd11a0"->"0x55cf7ecd1340"
-	"0x55cf7ecd1440" [fillcolor = "#B300FF", label = "if"]
-	"0x55cf7ecd1ac0" [fillcolor = "#B300FF", label = "bool op | &&"]
-	"0x55cf7ecd1640" [fillcolor = "#B300FF", label = "bool op | or"]
-	"0x55cf7ecd1540" [fillcolor = "#B300FF", label = "comp sign | less"]
-	"0x55cf7ecd14c0" [fillcolor = "#B300FF", label = "var | d"]
+"0x55555556c660"->"0x55555556c800"
 edge [color=red];
-"0x55cf7ecd1540"->"0x55cf7ecd14c0"
-	"0x55cf7ecd15c0" [fillcolor = "#B300FF", label = "int num | 2"]
+"0x55555556c5e0"->"0x55555556c660"
+	"0x55555556ca00" [fillcolor = "#B300FF", label = "func | int | Main"]
+	"0x55555556cba0" [fillcolor = "#B300FF", label = "func | dprint"]
+	"0x55555556cc20" [fillcolor = "#B300FF", label = "func | sum"]
+	"0x55555556cca0" [fillcolor = "#B300FF", label = "int num | 4"]
 edge [color=red];
-"0x55cf7ecd1540"->"0x55cf7ecd15c0"
+"0x55555556cc20"->"0x55555556cca0"
+	"0x55555556ce50" [fillcolor = "#B300FF", label = "int num | 3"]
 edge [color=red];
-"0x55cf7ecd1640"->"0x55cf7ecd1540"
-	"0x55cf7ecd1840" [fillcolor = "#B300FF", label = "comp sign | greater"]
-	"0x55cf7ecd1740" [fillcolor = "#B300FF", label = "arith op | +"]
-	"0x55cf7ecd16c0" [fillcolor = "#B300FF", label = "var | d"]
+"0x55555556cc20"->"0x55555556ce50"
 edge [color=red];
-"0x55cf7ecd1740"->"0x55cf7ecd16c0"
-	"0x55cf7ecd17c0" [fillcolor = "#B300FF", label = "int num | 3"]
+"0x55555556cba0"->"0x55555556cc20"
 edge [color=red];
-"0x55cf7ecd1740"->"0x55cf7ecd17c0"
+"0x55555556ca00"->"0x55555556cba0"
+	"0x55555556ced0" [fillcolor = "#B300FF", label = "return"]
+	"0x55555556cf50" [fillcolor = "#B300FF", label = "int num | 0"]
 edge [color=red];
-"0x55cf7ecd1840"->"0x55cf7ecd1740"
-	"0x55cf7ecd1940" [fillcolor = "#B300FF", label = "arith op | -"]
-	"0x55cf7ecd18c0" [fillcolor = "#B300FF", label = "int num | 11"]
+"0x55555556ced0"->"0x55555556cf50"
 edge [color=red];
-"0x55cf7ecd1940"->"0x55cf7ecd18c0"
-	"0x55cf7ecd19c0" [fillcolor = "#B300FF", label = "int num | 2"]
+"0x55555556ca00"->"0x55555556ced0"
 edge [color=red];
-"0x55cf7ecd1940"->"0x55cf7ecd19c0"
-edge [color=red];
-"0x55cf7ecd1840"->"0x55cf7ecd1940"
-edge [color=red];
-"0x55cf7ecd1640"->"0x55cf7ecd1840"
-	"0x55cf7ecd1a40" [fillcolor = "#B300FF", label = "var | a"]
-edge [color=red];
-"0x55cf7ecd1640"->"0x55cf7ecd1a40"
-edge [color=red];
-"0x55cf7ecd1ac0"->"0x55cf7ecd1640"
-	"0x55cf7ecd1bc0" [fillcolor = "#B300FF", label = "comp sign | less"]
-	"0x55cf7ecd1b40" [fillcolor = "#B300FF", label = "int num | 4"]
-edge [color=red];
-"0x55cf7ecd1bc0"->"0x55cf7ecd1b40"
-	"0x55cf7ecd1c40" [fillcolor = "#B300FF", label = "int num | 5"]
-edge [color=red];
-"0x55cf7ecd1bc0"->"0x55cf7ecd1c40"
-edge [color=red];
-"0x55cf7ecd1ac0"->"0x55cf7ecd1bc0"
-edge [color=red];
-"0x55cf7ecd1440"->"0x55cf7ecd1ac0"
-	"0x55cf7ecd1c60" [fillcolor = "#B300FF", label = "func | print"]
-	"0x55cf7ecd3200" [fillcolor = "#B300FF", label = "float num | 2.200000"]
-edge [color=red];
-"0x55cf7ecd1c60"->"0x55cf7ecd3200"
-edge [color=red];
-"0x55cf7ecd1440"->"0x55cf7ecd1c60"
-	"0x55cf7ecd3280" [fillcolor = "#B300FF", label = "return"]
-edge [color=red];
-"0x55cf7ecd1440"->"0x55cf7ecd3280"
-edge [color=red];
-"0x55cf7ecd11a0"->"0x55cf7ecd1440"
-	"0x55cf7ecd3300" [fillcolor = "#B300FF", label = "func | print"]
-	"0x55cf7ecd3400" [fillcolor = "#B300FF", label = "arith op | *"]
-	"0x55cf7ecd3380" [fillcolor = "#B300FF", label = "int num | 12"]
-edge [color=red];
-"0x55cf7ecd3400"->"0x55cf7ecd3380"
-	"0x55cf7ecd3480" [fillcolor = "#B300FF", label = "int num | 4"]
-edge [color=red];
-"0x55cf7ecd3400"->"0x55cf7ecd3480"
-	"0x55cf7ecd3500" [fillcolor = "#B300FF", label = "var | a"]
-edge [color=red];
-"0x55cf7ecd3400"->"0x55cf7ecd3500"
-	"0x55cf7ecd3580" [fillcolor = "#B300FF", label = "var | b"]
-edge [color=red];
-"0x55cf7ecd3400"->"0x55cf7ecd3580"
-edge [color=red];
-"0x55cf7ecd3300"->"0x55cf7ecd3400"
-edge [color=red];
-"0x55cf7ecd11a0"->"0x55cf7ecd3300"
-edge [color=red];
-"0x55cf7ecd1020"->"0x55cf7ecd11a0"
-	"0x55cf7ecd3600" [fillcolor = "#B300FF", label = "func | int | main"]
-	"0x55cf7ecd37a0" [fillcolor = "#B300FF", label = "var | int | a"]
-	"0x55cf7ecd3820" [fillcolor = "#B300FF", label = "int num | 3"]
-edge [color=red];
-"0x55cf7ecd37a0"->"0x55cf7ecd3820"
-edge [color=red];
-"0x55cf7ecd3600"->"0x55cf7ecd37a0"
-	"0x55cf7ecd38a0" [fillcolor = "#B300FF", label = "if"]
-	"0x55cf7ecd39a0" [fillcolor = "#B300FF", label = "comp sign | less equal"]
-	"0x55cf7ecd3920" [fillcolor = "#B300FF", label = "var | a"]
-edge [color=red];
-"0x55cf7ecd39a0"->"0x55cf7ecd3920"
-	"0x55cf7ecd3a20" [fillcolor = "#B300FF", label = "int num | 3"]
-edge [color=red];
-"0x55cf7ecd39a0"->"0x55cf7ecd3a20"
-edge [color=red];
-"0x55cf7ecd38a0"->"0x55cf7ecd39a0"
-	"0x55cf7ecd3aa0" [fillcolor = "#B300FF", label = "return"]
-	"0x55cf7ecd3b20" [fillcolor = "#B300FF", label = "float num | 4.300000"]
-edge [color=red];
-"0x55cf7ecd3aa0"->"0x55cf7ecd3b20"
-edge [color=red];
-"0x55cf7ecd38a0"->"0x55cf7ecd3aa0"
-edge [color=red];
-"0x55cf7ecd3600"->"0x55cf7ecd38a0"
-	"0x55cf7ecd3ba0" [fillcolor = "#B300FF", label = "elif"]
-	"0x55cf7ecd3ca0" [fillcolor = "#B300FF", label = "comp sign | greater"]
-	"0x55cf7ecd3c20" [fillcolor = "#B300FF", label = "var | a"]
-edge [color=red];
-"0x55cf7ecd3ca0"->"0x55cf7ecd3c20"
-	"0x55cf7ecd3d20" [fillcolor = "#B300FF", label = "int num | 5"]
-edge [color=red];
-"0x55cf7ecd3ca0"->"0x55cf7ecd3d20"
-edge [color=red];
-"0x55cf7ecd3ba0"->"0x55cf7ecd3ca0"
-	"0x55cf7ecd3da0" [fillcolor = "#B300FF", label = "func | Shit"]
-	"0x55cf7ecd3ea0" [fillcolor = "#B300FF", label = "arith op | +"]
-	"0x55cf7ecd3e20" [fillcolor = "#B300FF", label = "var | a"]
-edge [color=red];
-"0x55cf7ecd3ea0"->"0x55cf7ecd3e20"
-	"0x55cf7ecd3fa0" [fillcolor = "#B300FF", label = "arith op | +"]
-	"0x55cf7ecd3f20" [fillcolor = "#B300FF", label = "var | b"]
-edge [color=red];
-"0x55cf7ecd3fa0"->"0x55cf7ecd3f20"
-	"0x55cf7ecd40a0" [fillcolor = "#B300FF", label = "arith op | /"]
-	"0x55cf7ecd4020" [fillcolor = "#B300FF", label = "int num | 4"]
-edge [color=red];
-"0x55cf7ecd40a0"->"0x55cf7ecd4020"
-	"0x55cf7ecd4120" [fillcolor = "#B300FF", label = "float num | 3.200000"]
-edge [color=red];
-"0x55cf7ecd40a0"->"0x55cf7ecd4120"
-edge [color=red];
-"0x55cf7ecd3fa0"->"0x55cf7ecd40a0"
-edge [color=red];
-"0x55cf7ecd3ea0"->"0x55cf7ecd3fa0"
-	"0x55cf7ecd41a0" [fillcolor = "#B300FF", label = "var | c"]
-edge [color=red];
-"0x55cf7ecd3ea0"->"0x55cf7ecd41a0"
-	"0x55cf7ecd4220" [fillcolor = "#B300FF", label = "int num | 1"]
-edge [color=red];
-"0x55cf7ecd3ea0"->"0x55cf7ecd4220"
-edge [color=red];
-"0x55cf7ecd3da0"->"0x55cf7ecd3ea0"
-edge [color=red];
-"0x55cf7ecd3ba0"->"0x55cf7ecd3da0"
-edge [color=red];
-"0x55cf7ecd3600"->"0x55cf7ecd3ba0"
-	"0x55cf7ecd42a0" [fillcolor = "#B300FF", label = "else"]
-	"0x55cf7ecd4320" [fillcolor = "#B300FF", label = "return"]
-	"0x55cf7ecd4420" [fillcolor = "#B300FF", label = "arith op | *"]
-	"0x55cf7ecd43a0" [fillcolor = "#B300FF", label = "int num | 25"]
-edge [color=red];
-"0x55cf7ecd4420"->"0x55cf7ecd43a0"
-	"0x55cf7ecd44a0" [fillcolor = "#B300FF", label = "int num | 4"]
-edge [color=red];
-"0x55cf7ecd4420"->"0x55cf7ecd44a0"
-edge [color=red];
-"0x55cf7ecd4320"->"0x55cf7ecd4420"
-edge [color=red];
-"0x55cf7ecd42a0"->"0x55cf7ecd4320"
-edge [color=red];
-"0x55cf7ecd3600"->"0x55cf7ecd42a0"
-	"0x55cf7ecd4520" [fillcolor = "#B300FF", label = "return"]
-	"0x55cf7ecd45a0" [fillcolor = "#B300FF", label = "int num | 0"]
-edge [color=red];
-"0x55cf7ecd4520"->"0x55cf7ecd45a0"
-edge [color=red];
-"0x55cf7ecd3600"->"0x55cf7ecd4520"
-edge [color=red];
-"0x55cf7ecd1020"->"0x55cf7ecd3600"
+"0x55555556c5e0"->"0x55555556ca00"
 }

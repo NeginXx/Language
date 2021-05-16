@@ -1,8 +1,10 @@
 Gpp = g++
-Flags = -g -Wall -Wextra -pedantic
+Flags = -g
 bin = bin
 src = src
-Objs = $(bin)/Tree.o           \
+Objs = $(bin)/main.o           \
+			 $(bin)/Compiler.o       \
+       $(bin)/Tree.o           \
 			 $(bin)/Tokenize.o       \
 			 $(bin)/OutputAndError.o \
        $(bin)/TextConstruct.o  \
@@ -11,6 +13,12 @@ Objs = $(bin)/Tree.o           \
 
 out: $(Objs)
 	$(Gpp) $(Flags) $(Objs) -o out
+
+$(bin)/main.o: $(src)/main.c
+	$(Gpp) -c $(Flags) $(src)/main.c -o $(bin)/main.o
+
+$(bin)/Compiler.o: $(src)/Compiler.c
+	$(Gpp) -c $(Flags) $(src)/Compiler.c -o $(bin)/Compiler.o
 
 $(bin)/Tree.o: $(src)/Tree.c
 	$(Gpp) -c $(Flags) $(src)/Tree.c -o $(bin)/Tree.o
