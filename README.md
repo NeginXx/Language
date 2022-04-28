@@ -1,5 +1,5 @@
 # Overview
-This is a compiler of C-like programming language. You can find grammar of this language in file grammar.txt. Features currently supported are two variable types (float, int), global variables and standard input output library to scan and print numbers (dprint, fprint, dscan, fscan).
+This is a compiler of C-like programming language. You can find grammar of this language in file grammar.txt. Features currently supported are two variable types (float, int), global variables and standard input output library to scan and print numbers (dprint, fprint, dscan, fscan). It is still work in progress though
 ### Example program
 ```c++
 int func(int a) [
