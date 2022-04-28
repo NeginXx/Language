@@ -17,16 +17,6 @@ int Main() [
 // void empty() [
 // ]
 
-// void Shit(float d) [
-// 	int a = 0
-// 	a = 5
-// 	if ((d < 2 || d + 3 > 11 - 2 || a) && (4 < 5)) [
-// 		print(2.2)
-// 		return
-// 	]
-// 	print(12 * 4 * a * b)
-// ]
-
 // int main() [
 // 	int a = 3
 // 	if (a < 2) [

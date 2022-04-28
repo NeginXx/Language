@@ -14,10 +14,16 @@
 static const char* kFileExtension = ".neg";
 
 void PrintHelp() {
-	printf("dump tree -t\ndebug -d\ncompile to asm file -a\n");
-	printf("compile to executable file -e\n");
+	printf("-t dump tree\n");
+	printf("-d debug\n");
+	printf("-a compile to asm file\n");
+	printf("-e compile to executable file\n");
+	printf("-o name of file to compile, should be .neg format\n");
+	printf("-h help\n");
 	printf("asm file will be named a.asm\n");
 	printf("executable will be named e.out\n");
+	printf("\nexample:\n");
+	printf("-o myprogram.neg -t -a\n");
 }
 
 int ProcessTerminalArgs(CompileFlags* flags, int argc, const char** argv) {
@@ -67,7 +73,7 @@ int ProcessTerminalArgs(CompileFlags* flags, int argc, const char** argv) {
 		}
 
 		if (!flags->need_asm && !flags->need_elf &&
-			  !flags->need_tree_dump) {
+			  !flags->need_tree_dump && !flags->debug) {
 			RETURN kNoCompileFlag;
 		}
 	}
@@ -85,8 +91,6 @@ void SetDebugFlags(CompileFlags* flags) {
 	memcpy(flags, &flagss, sizeof(CompileFlags));
 	$$;
 }
-
-#define DEBUG
 
 #define CHECK_FOR_ERROR(func)         \
 	if ((err = func) != 0) {            \

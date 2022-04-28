@@ -1,0 +1,69 @@
+This file represents the grammar of this language
+
+How to understand this file:
+  Names of rules are put without any quotes: Decl Expr
+  Character sequences that will literally be present in code are put in single quotes: 'int' '<'
+  '|' means or: "Decl = 'int' | 'float'" means that Decl rule starts with 'int' or 'float'
+  {}* means arbitrary number of repetitions of content inside the brackets
+  {}+ means arbitrary number of repetitions of content inside the brackets, but repeated at least once
+  {}- means 0 or 1 repetitions
+
+// Declaration token
+Decl  ::=  'int' | 'float'
+
+// Main rule, any rule starts with declaration of function or global variable
+Gram  ::=  { VarDecl | FuncDecl }+ '\0'
+
+// Function declaration
+FuncDecl  ::=  Decl VarName '(' VarDeclInFunc {',' VarDeclInFunc}* ')' StatBody
+
+// Statement body
+StatBody  ::=  '[' {Stat}* ']'
+
+// Body under any conditional (if, while ...)
+CondBody  ::=  StatBody | LoopStat
+
+// Statement
+Stat      ::=  Loop            |
+               If              |
+               VarDecl    '\n' |
+               FuncCall   '\n' |
+               VarName = Expr '\n' |
+               'return' { Expr }- '\n'
+
+// Statement in loop
+LoopStat  ::= Stat | continue '\n' | break '\n'
+
+// Function call
+FuncCall  ::=  VarName '(' { Expr {',' Expr}* }- ')' '\n'
+
+Loop      ::=  'while' Cond CondBody
+
+If        ::=  'if' Cond CondBody {Else}-
+Else      ::=  'else' CondBody
+VarDecl   ::=  Decl VarName { = Expr }- '\n'
+VarDeclInFunc ::=  Decl VarName
+
+// Condition
+Cond      ::=  '(' LogicExpr ')'
+
+// Logic expression
+LogicExpr ::=  And { '||' And }*
+And       ::=  LogicPrim { '&&' LogicPrim }*
+LogicPrim ::=  '(' LogicExpr ')' | '!' LogicExpr | Ineq
+
+// Inequality
+Ineq      ::=  Expr { ['<', '>', '==', '!=', '<=', '>='] Expr }*
+
+// Expression
+Expr      ::=  MulDiv  { ['+', '-'] MulDiv }*
+
+// Multiplication
+MulDiv    ::=  Prim { ['*', '/'] Prim }*
+
+// Primary expression
+Prim      ::=  '(' Expr ')' | Num | VarName | FuncCall
+
+// Rule for variable name and number representation in code
+VarName   ::=  { ['a' - 'Z', '_'] }+ { ['0' - '9'] }*
+Num       ::=  { ['0' - '9'] }+ { '.' ['0' - '9'] }-

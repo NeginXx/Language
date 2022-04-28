@@ -1,0 +1,67 @@
+digraph G {
+node [shape = "record", style = "filled", fillcolor = "#006FFF"]
+	"0x55ab98a9aa80" [fillcolor = "#B300FF", label = "root"]
+	"0x55ab98a9ab00" [fillcolor = "#B300FF", label = "func | int | sum"]
+	"0x55ab98a9aca0" [fillcolor = "#B300FF", label = "return"]
+	"0x55ab98a9aeb0" [fillcolor = "#B300FF", label = "arith op | +"]
+	"0x55ab98a9ae30" [fillcolor = "#B300FF", label = "var | a"]
+edge [color=red];
+"0x55ab98a9aeb0"->"0x55ab98a9ae30"
+	"0x55ab98a9af30" [fillcolor = "#B300FF", label = "var | b"]
+edge [color=red];
+"0x55ab98a9aeb0"->"0x55ab98a9af30"
+edge [color=red];
+"0x55ab98a9aca0"->"0x55ab98a9aeb0"
+edge [color=red];
+"0x55ab98a9ab00"->"0x55ab98a9aca0"
+edge [color=red];
+"0x55ab98a9aa80"->"0x55ab98a9ab00"
+	"0x55ab98a9afb0" [fillcolor = "#B300FF", label = "func | float | fsum"]
+	"0x55ab98a9b150" [fillcolor = "#B300FF", label = "return"]
+	"0x55ab98a9b250" [fillcolor = "#B300FF", label = "arith op | +"]
+	"0x55ab98a9b1d0" [fillcolor = "#B300FF", label = "var | a"]
+edge [color=red];
+"0x55ab98a9b250"->"0x55ab98a9b1d0"
+	"0x55ab98a9b2d0" [fillcolor = "#B300FF", label = "var | b"]
+edge [color=red];
+"0x55ab98a9b250"->"0x55ab98a9b2d0"
+edge [color=red];
+"0x55ab98a9b150"->"0x55ab98a9b250"
+edge [color=red];
+"0x55ab98a9afb0"->"0x55ab98a9b150"
+edge [color=red];
+"0x55ab98a9aa80"->"0x55ab98a9afb0"
+	"0x55ab98a9b350" [fillcolor = "#B300FF", label = "func | int | Main"]
+	"0x55ab98a9b4f0" [fillcolor = "#B300FF", label = "func | dprint"]
+	"0x55ab98a9b570" [fillcolor = "#B300FF", label = "func | sum"]
+	"0x55ab98a9b5f0" [fillcolor = "#B300FF", label = "int num | 4"]
+edge [color=red];
+"0x55ab98a9b570"->"0x55ab98a9b5f0"
+	"0x55ab98a9b670" [fillcolor = "#B300FF", label = "int num | 3"]
+edge [color=red];
+"0x55ab98a9b570"->"0x55ab98a9b670"
+edge [color=red];
+"0x55ab98a9b4f0"->"0x55ab98a9b570"
+edge [color=red];
+"0x55ab98a9b350"->"0x55ab98a9b4f0"
+	"0x55ab98a9b6f0" [fillcolor = "#B300FF", label = "func | fprint"]
+	"0x55ab98a9b770" [fillcolor = "#B300FF", label = "func | fsum"]
+	"0x55ab98a9b7f0" [fillcolor = "#B300FF", label = "float num | 334.140015"]
+edge [color=red];
+"0x55ab98a9b770"->"0x55ab98a9b7f0"
+	"0x55ab98a9b870" [fillcolor = "#B300FF", label = "float num | 5.100000"]
+edge [color=red];
+"0x55ab98a9b770"->"0x55ab98a9b870"
+edge [color=red];
+"0x55ab98a9b6f0"->"0x55ab98a9b770"
+edge [color=red];
+"0x55ab98a9b350"->"0x55ab98a9b6f0"
+	"0x55ab98a9b8f0" [fillcolor = "#B300FF", label = "return"]
+	"0x55ab98a9b970" [fillcolor = "#B300FF", label = "int num | 0"]
+edge [color=red];
+"0x55ab98a9b8f0"->"0x55ab98a9b970"
+edge [color=red];
+"0x55ab98a9b350"->"0x55ab98a9b8f0"
+edge [color=red];
+"0x55ab98a9aa80"->"0x55ab98a9b350"
+}

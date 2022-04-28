@@ -181,9 +181,13 @@ namespace dot {
 		static int cnt = -1;
 		++cnt;
 
-		char file_name[10] = {};
-		sprintf(file_name, "d%d", cnt);
-		FILE* file = fopen(file_name, "w");
+		char file_path[50] = {};
+		if (cnt == 0) {
+			sprintf(file_path, "%s/tree", kCompilationResDir);
+		} else {
+			sprintf(file_path, "%s/tree%d", kCompilationResDir, cnt);
+		}
+		FILE* file = fopen(file_path, "w");
 		fprintf(file, "digraph G {\n");
 		fprintf(file, "node [shape = \"record\","
 			            " style = \"filled\", fillcolor = "
@@ -193,10 +197,10 @@ namespace dot {
 
 		fclose(file);
 
-		char cmd[50] = {};
-		sprintf(cmd, "dot -Tpng -O %s", file_name);
+		char cmd[100] = {};
+		sprintf(cmd, "dot -Tpng -O %s", file_path);
 		system(cmd);
-		sprintf(cmd, "xdg-open %s.png", file_name);
+		sprintf(cmd, "xdg-open %s.png", file_path);
 	  system(cmd);
 	  $$;
 	}

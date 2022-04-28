@@ -11,6 +11,8 @@
 #include "../include/Compiler.h"
 #include "../include/main.h"
 
+const char* kAsmFileName = "a.asm";
+
 // data->is_error_occured = true;
 // PrintCompilationError(data->tree->text, node->token, kVarInitInvalidTypeError);
 
@@ -722,7 +724,7 @@ int RunThroughAllFunctions(CompilerData* data) {
 int PrintBeginningOfFile(FILE* file) {
 	$;
 	assert(file != NULL);
-	FILE* iolib = fopen("iolib.asm", "r");
+	FILE* iolib = fopen("iolib/iolib.asm", "r");
 	if (iolib == NULL) {
 		RETURN kNoIolibFile;
 	}
@@ -845,7 +847,11 @@ int CompileTree(TreeData* tree) {
 	assert(tree != NULL);
 	assert(tree->root != NULL);
 
-	FILE* file = fopen("a.asm", "w");
+	char asm_file_path[100] = {};
+	sprintf(asm_file_path, "%s/%s", kCompilationResDir, kAsmFileName);
+	FILE* file = fopen(asm_file_path, "w");
+	assert(file != nullptr);
+
 	CATCH_ERROR(PrintBeginningOfFile(file));
 	CompilerData data = {};
 	CATCH_ERROR(ConstructData(&data, file, tree));

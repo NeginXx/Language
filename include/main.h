@@ -2,6 +2,8 @@
 #include "Vector.h"
 #include "TextConstruct.h"
 
+static const char* kCompilationResDir = "compilation_res";
+
 enum RuntimeError {
   kNoError,
   kNotEnoughMemory,
