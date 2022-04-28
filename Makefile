@@ -37,3 +37,7 @@ $(bin)/StackTrace.o: $(src)/StackTrace.c
 
 $(bin)/Vector.o: $(src)/Vector.c
 	$(Gpp) -c $(Flags) $(src)/Vector.c -o $(bin)/Vector.o
+
+.PHONY: init
+init:
+	mkdir -p $(bin)
